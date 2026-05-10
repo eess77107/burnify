@@ -1,0 +1,3555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#0A0E1A" />
+<title>燃练 Burnify · 校园运动养成 RPG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     RESET & BASE
+     ============================================================ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%;
+    font-family: 'Inter', 'Noto Sans SC', 'PingFang SC', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    color: #E6EAF5;
+    overflow: hidden;
+  }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  ul, ol { list-style: none; }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+
+  /* ============================================================
+     THEME TOKENS
+     ============================================================ */
+  :root {
+    --bg-deep: #06080F;
+    --bg-base: #0A0E1A;
+    --bg-elev-1: #131829;
+    --bg-elev-2: #1A2138;
+    --bg-elev-3: #232C49;
+    --line: rgba(255,255,255,0.08);
+    --line-strong: rgba(255,255,255,0.16);
+
+    --text-1: #E6EAF5;
+    --text-2: #A3ACC4;
+    --text-3: #6B7393;
+    --text-dim: #4B5170;
+
+    --accent: #FFD100;        /* 美团黄 */
+    --accent-2: #FFA800;
+    --neon-cyan: #00E5FF;
+    --neon-pink: #FF3B7B;
+    --neon-purple: #9D5CFF;
+    --neon-green: #2EE6A6;
+    --neon-orange: #FF8A3D;
+
+    --grad-warm: linear-gradient(135deg, #FFD100 0%, #FF8A3D 100%);
+    --grad-cool: linear-gradient(135deg, #00E5FF 0%, #9D5CFF 100%);
+    --grad-pink: linear-gradient(135deg, #FF3B7B 0%, #9D5CFF 100%);
+    --grad-mint: linear-gradient(135deg, #2EE6A6 0%, #00E5FF 100%);
+    --grad-fire: linear-gradient(135deg, #FF8A3D 0%, #FF3B7B 100%);
+    --grad-card: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0) 100%);
+
+    --rad-pill: 999px;
+    --rad-lg: 20px;
+    --rad-md: 14px;
+    --rad-sm: 10px;
+
+    --shadow-1: 0 4px 18px rgba(0,0,0,0.30);
+    --shadow-2: 0 12px 40px rgba(0,0,0,0.45);
+    --shadow-glow-y: 0 0 24px rgba(255,209,0,0.40);
+    --shadow-glow-c: 0 0 24px rgba(0,229,255,0.35);
+    --shadow-glow-p: 0 0 24px rgba(255,59,123,0.35);
+  }
+
+  /* ============================================================
+     PAGE BACKGROUND (DESKTOP STAGE)
+     ============================================================ */
+  body {
+    background:
+      radial-gradient(1200px 600px at 20% 10%, rgba(157,92,255,0.18), transparent 60%),
+      radial-gradient(900px 600px at 90% 90%, rgba(0,229,255,0.14), transparent 60%),
+      radial-gradient(700px 500px at 50% 100%, rgba(255,138,61,0.12), transparent 60%),
+      var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow: hidden;
+  }
+
+  .stage {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+
+  .stage-side {
+    display: none;
+    max-width: 360px;
+    color: var(--text-2);
+    align-self: center;
+  }
+  .stage-side .logo {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 18px;
+  }
+  .stage-side .logo-mark {
+    width: 38px; height: 38px; border-radius: 12px;
+    background: var(--grad-warm);
+    display: grid; place-items: center;
+    font-family: 'Orbitron', sans-serif; font-weight: 900; color: #1a1206;
+    box-shadow: var(--shadow-glow-y);
+  }
+  .stage-side h1 {
+    font-family: 'Orbitron', 'Noto Sans SC', sans-serif;
+    font-size: 38px; font-weight: 800; color: var(--text-1);
+    letter-spacing: 1px; line-height: 1.1;
+  }
+  .stage-side h1 .accent { color: var(--accent); }
+  .stage-side .tagline {
+    margin-top: 10px; font-size: 17px; color: var(--text-2);
+  }
+  .stage-side .features {
+    margin-top: 22px; display: grid; gap: 10px;
+  }
+  .stage-side .features li {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; color: var(--text-2);
+  }
+  .stage-side .features .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--neon-cyan);
+    box-shadow: 0 0 8px var(--neon-cyan);
+  }
+  .stage-side .meta {
+    margin-top: 28px; padding-top: 22px;
+    border-top: 1px solid var(--line);
+    font-size: 12px; color: var(--text-3); line-height: 1.7;
+  }
+
+  @media (min-width: 1080px) {
+    .stage-side { display: block; }
+  }
+
+  /* ============================================================
+     PHONE FRAME
+     ============================================================ */
+  .phone {
+    position: relative;
+    width: min(420px, 100vw);
+    height: min(880px, 100vh);
+    border-radius: 44px;
+    background: var(--bg-base);
+    box-shadow:
+      0 0 0 2px rgba(255,255,255,0.06),
+      0 30px 80px rgba(0,0,0,0.6),
+      0 0 60px rgba(157,92,255,0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  @media (max-width: 540px) {
+    .phone {
+      width: 100vw; height: 100vh; border-radius: 0;
+      box-shadow: none;
+    }
+    body { padding: 0; }
+  }
+
+  /* status bar (top of phone) */
+  .status-bar {
+    flex: 0 0 auto;
+    height: 36px;
+    padding: 10px 24px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px; font-weight: 600;
+    color: var(--text-1);
+  }
+  .status-bar .right { display: flex; align-items: center; gap: 6px; }
+  .status-bar svg { width: 16px; height: 11px; }
+
+  /* ============================================================
+     APP HEADER (per page)
+     ============================================================ */
+  .app-header {
+    flex: 0 0 auto;
+    padding: 8px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .app-header .left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .app-header .avatar-mini {
+    width: 36px; height: 36px; border-radius: 12px;
+    background: var(--grad-pink);
+    display: grid; place-items: center;
+    font-weight: 800; color: #fff;
+    box-shadow: var(--shadow-glow-p);
+    flex-shrink: 0;
+  }
+  .app-header .greet { min-width: 0; }
+  .app-header .greet .hi { font-size: 12px; color: var(--text-3); }
+  .app-header .greet .name {
+    font-size: 15px; font-weight: 700; color: var(--text-1);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .app-header .name .badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    margin-left: 6px; padding: 2px 6px; border-radius: 6px;
+    font-size: 10px; font-weight: 700; color: #1a1206;
+    background: var(--grad-warm); vertical-align: middle;
+  }
+  .app-header .actions { display: flex; align-items: center; gap: 8px; }
+  .pill-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--line);
+    display: grid; place-items: center;
+    transition: all .2s ease;
+  }
+  .pill-icon:hover { background: rgba(255,255,255,0.10); transform: translateY(-1px); }
+  .pill-icon svg { width: 18px; height: 18px; }
+
+  /* compact resource pill */
+  .resource-pill {
+    height: 28px; padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--line);
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700;
+  }
+  .resource-pill .icon {
+    width: 16px; height: 16px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 10px;
+  }
+  .resource-pill.gold .icon { background: var(--grad-warm); color: #1a1206; }
+  .resource-pill.energy .icon { background: var(--grad-mint); color: #07211a; }
+
+  /* ============================================================
+     VIEWPORT & PAGES
+     ============================================================ */
+  .viewport {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    position: relative;
+  }
+  .viewport::-webkit-scrollbar { display: none; }
+
+  .page { display: none; padding: 4px 16px 110px; animation: pageIn .42s cubic-bezier(.2,.7,.2,1); }
+  .page.active { display: block; }
+  @keyframes pageIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============================================================
+     CARDS
+     ============================================================ */
+  .card {
+    background: var(--bg-elev-1);
+    border: 1px solid var(--line);
+    border-radius: var(--rad-lg);
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card.glow-y { box-shadow: 0 0 0 1px rgba(255,209,0,0.2), 0 12px 40px rgba(255,209,0,0.10); }
+  .card.glow-c { box-shadow: 0 0 0 1px rgba(0,229,255,0.2), 0 12px 40px rgba(0,229,255,0.10); }
+  .card.glow-p { box-shadow: 0 0 0 1px rgba(255,59,123,0.2), 0 12px 40px rgba(255,59,123,0.10); }
+
+  .section-title {
+    display: flex; align-items: center; justify-content: space-between;
+    margin: 18px 4px 10px;
+  }
+  .section-title h2 { font-size: 15px; font-weight: 800; letter-spacing: .3px; color: var(--text-1); }
+  .section-title .more {
+    font-size: 12px; color: var(--text-3);
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .section-title .more:hover { color: var(--text-1); }
+
+  /* ============================================================
+     HERO CARD (Home — Character)
+     ============================================================ */
+  .hero {
+    background:
+      radial-gradient(circle at 80% 0%, rgba(255,59,123,0.30), transparent 50%),
+      radial-gradient(circle at 0% 100%, rgba(0,229,255,0.25), transparent 50%),
+      linear-gradient(135deg, #1A1235 0%, #0E1A2E 100%);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 24px;
+    padding: 18px 18px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(45deg, transparent 0 14px, rgba(255,255,255,0.02) 14px 15px);
+    pointer-events: none;
+  }
+  .hero-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .hero-class {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 700;
+    background: rgba(255,209,0,0.12); color: var(--accent);
+    border: 1px solid rgba(255,209,0,0.30);
+  }
+  .hero-season {
+    text-align: right; font-size: 11px; color: var(--text-3);
+  }
+  .hero-season strong { color: var(--neon-cyan); font-weight: 700; }
+
+  .hero-body { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
+  .avatar-3d {
+    flex: 0 0 auto;
+    width: 110px; height: 110px;
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at 30% 30%, #FFE680, #FFD100 35%, #FF8A3D 70%, #FF3B7B 100%);
+    position: relative;
+    box-shadow:
+      inset 0 6px 18px rgba(255,255,255,0.5),
+      inset 0 -8px 16px rgba(0,0,0,0.25),
+      0 14px 30px rgba(255,138,61,0.4);
+    display: grid; place-items: center;
+    overflow: hidden;
+  }
+  .avatar-3d::after {
+    content: ''; position: absolute; top: -12px; left: -12px; right: -12px; bottom: -12px;
+    border-radius: 36px;
+    background: conic-gradient(from 90deg, var(--neon-cyan), var(--neon-pink), var(--accent), var(--neon-purple), var(--neon-cyan));
+    filter: blur(14px); opacity: .35; z-index: -1;
+    animation: rotate 8s linear infinite;
+  }
+  @keyframes rotate { to { transform: rotate(360deg); } }
+
+  .avatar-3d .figure {
+    font-size: 56px; line-height: 1;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  }
+  .avatar-3d .level-tag {
+    position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+    padding: 3px 10px; border-radius: 999px;
+    background: #0A0E1A;
+    border: 2px solid var(--accent);
+    font-size: 11px; font-weight: 800; color: var(--accent);
+    white-space: nowrap;
+    box-shadow: var(--shadow-glow-y);
+  }
+
+  .hero-info { flex: 1; min-width: 0; }
+  .hero-info .nick { font-size: 20px; font-weight: 800; color: var(--text-1); }
+  .hero-info .nick .gender {
+    display: inline-grid; place-items: center;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: rgba(0,229,255,0.18); color: var(--neon-cyan);
+    font-size: 11px; font-weight: 700;
+    margin-left: 6px; vertical-align: middle;
+  }
+  .hero-info .title-tag {
+    font-size: 11px; color: var(--neon-pink);
+    margin-top: 2px; font-weight: 600; letter-spacing: .3px;
+  }
+
+  .xp-bar {
+    margin-top: 10px;
+    height: 10px; border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    position: relative; overflow: hidden;
+  }
+  .xp-bar .fill {
+    position: absolute; inset: 0;
+    width: 68%;
+    background: var(--grad-warm);
+    border-radius: 999px;
+    box-shadow: 0 0 10px rgba(255,209,0,0.7);
+    animation: shimmer 2.5s ease-in-out infinite;
+  }
+  .xp-bar .fill::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: translateX(-100%);
+    animation: shine 2.4s ease-in-out infinite;
+  }
+  @keyframes shine {
+    50% { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+  }
+  @keyframes shimmer { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.15); } }
+
+  .xp-meta {
+    margin-top: 6px; display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--text-3);
+  }
+  .xp-meta strong { color: var(--text-1); }
+
+  /* hero attributes (4 stats) */
+  .stats-grid {
+    margin-top: 14px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  }
+  .stat-cell {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 8px 4px 8px;
+    text-align: center;
+  }
+  .stat-cell .name { font-size: 10px; color: var(--text-3); font-weight: 600; }
+  .stat-cell .value { font-size: 18px; font-weight: 900; margin-top: 1px; font-family: 'Orbitron', sans-serif; }
+  .stat-cell.str .value { color: var(--neon-orange); }
+  .stat-cell.agi .value { color: var(--neon-green); }
+  .stat-cell.vit .value { color: var(--neon-cyan); }
+  .stat-cell.wil .value { color: var(--neon-purple); }
+  .stat-cell .delta { font-size: 9px; color: var(--text-3); margin-top: 1px; }
+  .stat-cell .delta.up { color: var(--neon-green); }
+
+  /* ============================================================
+     RESOURCE BAR (gold / energy / streak)
+     ============================================================ */
+  .res-row {
+    margin-top: 10px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  }
+  .res-card {
+    background: var(--bg-elev-1);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 10px 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .res-card .icon-circle {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .res-card .info { min-width: 0; }
+  .res-card .label { font-size: 10px; color: var(--text-3); }
+  .res-card .num { font-size: 15px; font-weight: 800; font-family: 'Orbitron', sans-serif; }
+  .res-card.gold .icon-circle { background: var(--grad-warm); color: #2a1c00; }
+  .res-card.energy .icon-circle { background: var(--grad-mint); color: #07291f; }
+  .res-card.streak .icon-circle { background: var(--grad-fire); color: #2a0c08; }
+
+  /* ============================================================
+     STREAK CALENDAR (7 days)
+     ============================================================ */
+  .streak-row {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
+    margin-top: 10px;
+  }
+  .streak-day {
+    aspect-ratio: 1 / 1.1;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px;
+    font-size: 10px; color: var(--text-3);
+    position: relative;
+  }
+  .streak-day .dot {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    display: grid; place-items: center;
+    font-size: 11px; color: var(--text-3);
+  }
+  .streak-day.done .dot {
+    background: var(--grad-warm); color: #2a1c00;
+    box-shadow: var(--shadow-glow-y);
+  }
+  .streak-day.done .dot::before { content: '✓'; font-weight: 900; }
+  .streak-day.today {
+    background: rgba(255,209,0,0.10);
+    border-color: rgba(255,209,0,0.40);
+  }
+  .streak-day.today .label { color: var(--accent); font-weight: 700; }
+
+  /* ============================================================
+     QUEST LIST (today)
+     ============================================================ */
+  .quest-list { display: grid; gap: 10px; }
+  .quest-item {
+    background: var(--bg-elev-1);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex; gap: 12px; align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .quest-item.done { opacity: 0.55; }
+  .quest-item .icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    display: grid; place-items: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .quest-item.q1 .icon { background: rgba(255,138,61,0.15); }
+  .quest-item.q2 .icon { background: rgba(0,229,255,0.15); }
+  .quest-item.q3 .icon { background: rgba(157,92,255,0.15); }
+  .quest-item.q4 .icon { background: rgba(46,230,166,0.15); }
+
+  .quest-item .body { flex: 1; min-width: 0; }
+  .quest-item .title {
+    font-size: 14px; font-weight: 700; color: var(--text-1);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .quest-item .desc {
+    font-size: 11px; color: var(--text-3); margin-top: 2px;
+  }
+  .quest-item .progress-bar {
+    height: 4px; border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    margin-top: 6px; overflow: hidden;
+  }
+  .quest-item .progress-bar .fill {
+    height: 100%; border-radius: 999px;
+    background: var(--grad-warm);
+  }
+  .quest-item .reward {
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .quest-item .reward .xp {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 11px; font-weight: 700;
+    padding: 4px 8px; border-radius: 999px;
+    background: rgba(255,209,0,0.12); color: var(--accent);
+  }
+  .quest-item .reward .progress-text {
+    font-size: 10px; color: var(--text-3); margin-top: 4px;
+  }
+  .quest-item.done .reward .xp { background: rgba(46,230,166,0.15); color: var(--neon-green); }
+
+  .quest-tag {
+    font-size: 9px; padding: 1px 5px; border-radius: 4px; font-weight: 700;
+    background: rgba(255,59,123,0.15); color: var(--neon-pink);
+    margin-left: 4px;
+  }
+  .quest-tag.daily { background: rgba(0,229,255,0.15); color: var(--neon-cyan); }
+  .quest-tag.team { background: rgba(157,92,255,0.18); color: var(--neon-purple); }
+
+  /* ============================================================
+     FRIEND FEED
+     ============================================================ */
+  .feed-list { display: grid; gap: 8px; }
+  .feed-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 14px;
+    background: var(--bg-elev-1); border: 1px solid var(--line);
+  }
+  .feed-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: grid; place-items: center; flex-shrink: 0;
+    font-weight: 700; color: #fff; font-size: 13px;
+  }
+  .feed-content { flex: 1; min-width: 0; }
+  .feed-content .text {
+    font-size: 12px; color: var(--text-1); line-height: 1.4;
+  }
+  .feed-content .text strong { color: var(--accent); }
+  .feed-content .time { font-size: 10px; color: var(--text-3); margin-top: 2px; }
+  .feed-action {
+    padding: 6px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 700;
+    background: rgba(255,209,0,0.12); color: var(--accent);
+  }
+  .feed-action:hover { background: rgba(255,209,0,0.24); }
+
+  /* ============================================================
+     BOTTOM TAB BAR
+     ============================================================ */
+  .tab-bar {
+    position: absolute;
+    left: 12px; right: 12px; bottom: 14px;
+    height: 64px;
+    background: rgba(15, 18, 35, 0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: space-around;
+    padding: 6px 6px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.55);
+    z-index: 50;
+  }
+  .tab-btn {
+    flex: 1;
+    height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px;
+    color: var(--text-3);
+    font-size: 10px; font-weight: 600;
+    position: relative;
+    transition: color .2s ease;
+  }
+  .tab-btn svg { width: 22px; height: 22px; transition: transform .25s ease; }
+  .tab-btn.active { color: var(--text-1); }
+  .tab-btn.active svg { transform: translateY(-1px); }
+  .tab-btn.active::before {
+    content: ''; position: absolute; top: 4px; left: 50%; transform: translateX(-50%);
+    width: 26px; height: 3px; border-radius: 2px;
+    background: var(--grad-warm);
+    box-shadow: var(--shadow-glow-y);
+  }
+
+  .tab-cta {
+    flex: 0 0 auto;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--grad-warm);
+    display: grid; place-items: center;
+    color: #1a1206;
+    margin-top: -22px;
+    box-shadow: 0 8px 24px rgba(255,209,0,0.45), inset 0 -3px 0 rgba(0,0,0,0.15);
+    position: relative;
+    transition: transform .2s ease;
+  }
+  .tab-cta:hover { transform: scale(1.05) rotate(8deg); }
+  .tab-cta::after {
+    content: ''; position: absolute; inset: -6px;
+    border-radius: 50%;
+    background: var(--grad-warm); opacity: .35;
+    z-index: -1; filter: blur(10px);
+  }
+  .tab-cta svg { width: 28px; height: 28px; }
+  .tab-cta-label {
+    position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; color: var(--accent); font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* ============================================================
+     PAGE: WORKOUT (open dungeon list)
+     ============================================================ */
+  .energy-card {
+    background:
+      radial-gradient(circle at 100% 0%, rgba(46,230,166,0.30), transparent 50%),
+      linear-gradient(135deg, #0F2A22 0%, #0A1224 100%);
+    border: 1px solid rgba(46,230,166,0.30);
+    border-radius: var(--rad-lg);
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 4px;
+  }
+  .energy-card .icon-big {
+    width: 44px; height: 44px; border-radius: 14px;
+    background: var(--grad-mint);
+    display: grid; place-items: center;
+    font-size: 22px; color: #07211a;
+  }
+  .energy-card .info { flex: 1; min-width: 0; }
+  .energy-card .label { font-size: 11px; color: var(--text-3); }
+  .energy-card .value { font-size: 18px; font-weight: 800; color: var(--neon-green); font-family: 'Orbitron', sans-serif; }
+  .energy-card .small { font-size: 10px; color: var(--text-3); margin-top: 2px; }
+  .energy-card .btn-recharge {
+    padding: 7px 14px; border-radius: 999px;
+    font-size: 12px; font-weight: 700;
+    background: rgba(46,230,166,0.18); color: var(--neon-green);
+    border: 1px solid rgba(46,230,166,0.40);
+  }
+
+  .dungeon-grid { display: grid; gap: 12px; }
+  .dungeon-card {
+    background: var(--bg-elev-1);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px;
+    display: flex; gap: 12px; align-items: center;
+    position: relative; overflow: hidden;
+    cursor: pointer; transition: transform .2s ease, border-color .2s ease;
+  }
+  .dungeon-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.18); }
+  .dungeon-card::before {
+    content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 4px;
+  }
+  .dungeon-card.run::before { background: var(--neon-orange); }
+  .dungeon-card.iron::before { background: var(--neon-pink); }
+  .dungeon-card.ball::before { background: var(--neon-cyan); }
+  .dungeon-card.hiit::before { background: var(--accent); }
+  .dungeon-card.yoga::before { background: var(--neon-purple); }
+  .dungeon-card.cycle::before { background: var(--neon-green); }
+
+  .dungeon-icon {
+    width: 56px; height: 56px; border-radius: 16px;
+    display: grid; place-items: center; font-size: 28px;
+    flex-shrink: 0;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+  }
+  .dungeon-card.run  .dungeon-icon { background: rgba(255,138,61,0.15); }
+  .dungeon-card.iron .dungeon-icon { background: rgba(255,59,123,0.15); }
+  .dungeon-card.ball .dungeon-icon { background: rgba(0,229,255,0.15); }
+  .dungeon-card.hiit .dungeon-icon { background: rgba(255,209,0,0.15); }
+  .dungeon-card.yoga .dungeon-icon { background: rgba(157,92,255,0.15); }
+  .dungeon-card.cycle .dungeon-icon { background: rgba(46,230,166,0.15); }
+
+  .dungeon-body { flex: 1; min-width: 0; }
+  .dungeon-name { font-size: 15px; font-weight: 800; color: var(--text-1); }
+  .dungeon-type { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .dungeon-rewards {
+    display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;
+  }
+  .reward-tag {
+    font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    color: var(--text-2);
+    display: inline-flex; align-items: center; gap: 3px;
+  }
+  .reward-tag.xp  { background: rgba(255,209,0,0.12); color: var(--accent); }
+  .reward-tag.gold{ background: rgba(255,138,61,0.12); color: var(--neon-orange); }
+  .reward-tag.str { background: rgba(255,59,123,0.12); color: var(--neon-pink); }
+  .reward-tag.agi { background: rgba(46,230,166,0.12); color: var(--neon-green); }
+  .reward-tag.vit { background: rgba(0,229,255,0.12); color: var(--neon-cyan); }
+  .reward-tag.wil { background: rgba(157,92,255,0.12); color: var(--neon-purple); }
+
+  .dungeon-go {
+    flex-shrink: 0;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.06); border: 1px solid var(--line);
+    display: grid; place-items: center;
+    transition: all .2s ease;
+  }
+  .dungeon-card:hover .dungeon-go {
+    background: var(--accent); color: #1a1206;
+    border-color: var(--accent);
+  }
+
+  .dungeon-meta {
+    position: absolute; top: 12px; right: 12px;
+    display: flex; gap: 4px; align-items: center;
+  }
+  .dungeon-meta .tag {
+    font-size: 9px; padding: 2px 6px; border-radius: 4px;
+    background: rgba(255,255,255,0.06); color: var(--text-3); font-weight: 700;
+  }
+  .dungeon-meta .tag.hot { background: rgba(255,59,123,0.18); color: var(--neon-pink); }
+  .dungeon-meta .tag.new { background: rgba(46,230,166,0.18); color: var(--neon-green); }
+
+  /* recently played */
+  .history-list { display: grid; gap: 8px; }
+  .history-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 14px;
+    background: var(--bg-elev-1); border: 1px solid var(--line);
+  }
+  .history-item .h-icon {
+    width: 32px; height: 32px; border-radius: 10px;
+    display: grid; place-items: center; font-size: 16px;
+    background: rgba(255,255,255,0.06); flex-shrink: 0;
+  }
+  .history-item .info { flex: 1; min-width: 0; }
+  .history-item .name { font-size: 13px; font-weight: 700; color: var(--text-1); }
+  .history-item .meta { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+  .history-item .gain {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+  }
+  .history-item .gain .xp { font-size: 12px; font-weight: 700; color: var(--accent); }
+  .history-item .gain .time { font-size: 10px; color: var(--text-3); }
+
+  /* ============================================================
+     PAGE: BATTLE / SOCIAL
+     ============================================================ */
+  .seg-tabs {
+    display: flex; gap: 4px;
+    background: var(--bg-elev-1);
+    border-radius: 14px; padding: 4px;
+    border: 1px solid var(--line);
+    margin: 4px 0 14px;
+  }
+  .seg-btn {
+    flex: 1; height: 36px;
+    border-radius: 10px;
+    font-size: 12px; font-weight: 700;
+    color: var(--text-3);
+    transition: all .2s ease;
+  }
+  .seg-btn.active {
+    background: rgba(255,209,0,0.14);
+    color: var(--accent);
+    box-shadow: inset 0 0 0 1px rgba(255,209,0,0.40);
+  }
+
+  .pk-card {
+    background: linear-gradient(135deg, rgba(255,59,123,0.15) 0%, rgba(157,92,255,0.10) 100%);
+    border: 1px solid rgba(255,59,123,0.30);
+    border-radius: var(--rad-lg);
+    padding: 14px;
+    display: grid; gap: 14px;
+  }
+  .pk-vs {
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px;
+  }
+  .pk-side { text-align: center; }
+  .pk-side .av {
+    width: 60px; height: 60px; border-radius: 18px;
+    margin: 0 auto;
+    display: grid; place-items: center;
+    font-size: 28px; color: #fff; font-weight: 800;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.30);
+  }
+  .pk-side.me .av { background: var(--grad-pink); }
+  .pk-side.op .av { background: var(--grad-cool); }
+  .pk-side .nick { font-size: 12px; font-weight: 700; margin-top: 6px; color: var(--text-1); }
+  .pk-side .pts { font-size: 18px; font-weight: 900; font-family: 'Orbitron', sans-serif; margin-top: 2px; }
+  .pk-side.me .pts { color: var(--neon-pink); }
+  .pk-side.op .pts { color: var(--neon-cyan); }
+  .pk-side .pts-label { font-size: 10px; color: var(--text-3); }
+
+  .pk-vs-mid {
+    width: 50px; height: 50px; border-radius: 50%;
+    background: #0A0E1A;
+    display: grid; place-items: center;
+    font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    box-shadow: var(--shadow-glow-y);
+  }
+  .pk-bar {
+    height: 8px; border-radius: 999px;
+    background: rgba(255,255,255,0.10);
+    position: relative; overflow: hidden;
+  }
+  .pk-bar .me-fill {
+    position: absolute; left: 0; top: 0; height: 100%;
+    width: 56%; background: var(--grad-pink); border-radius: 999px;
+  }
+  .pk-bar .op-fill {
+    position: absolute; right: 0; top: 0; height: 100%;
+    width: 44%; background: var(--grad-cool); border-radius: 999px; opacity: .5;
+  }
+  .pk-info {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px; color: var(--text-3);
+  }
+  .pk-info .stake { color: var(--accent); font-weight: 700; }
+
+  /* leaderboard */
+  .lb-list { display: grid; gap: 8px; }
+  .lb-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    background: var(--bg-elev-1); border: 1px solid var(--line);
+    border-radius: 16px;
+    position: relative; overflow: hidden;
+  }
+  .lb-rank {
+    width: 28px; text-align: center; flex-shrink: 0;
+    font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px;
+    color: var(--text-3);
+  }
+  .lb-row.top1 .lb-rank, .lb-row.top1 { color: var(--accent); }
+  .lb-row.top1 { border-color: rgba(255,209,0,0.40); background: rgba(255,209,0,0.06); }
+  .lb-row.top2 .lb-rank { color: #C0C7DA; }
+  .lb-row.top3 .lb-rank { color: #D8865E; }
+  .lb-row.me { border-color: rgba(255,59,123,0.40); background: rgba(255,59,123,0.06); }
+
+  .lb-av {
+    width: 36px; height: 36px; border-radius: 12px;
+    display: grid; place-items: center;
+    color: #fff; font-weight: 800; font-size: 14px; flex-shrink: 0;
+  }
+  .lb-info { flex: 1; min-width: 0; }
+  .lb-info .name { font-size: 13px; font-weight: 700; color: var(--text-1); }
+  .lb-info .meta { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+  .lb-pts {
+    text-align: right; flex-shrink: 0;
+  }
+  .lb-pts .v { font-size: 15px; font-weight: 800; font-family: 'Orbitron', sans-serif; color: var(--accent); }
+  .lb-pts .label { font-size: 10px; color: var(--text-3); }
+
+  /* dorm war board */
+  .dorm-card {
+    background: linear-gradient(135deg, rgba(157,92,255,0.15) 0%, rgba(0,229,255,0.10) 100%);
+    border: 1px solid rgba(157,92,255,0.30);
+    border-radius: var(--rad-lg);
+    padding: 14px;
+  }
+  .dorm-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .dorm-title {
+    font-size: 14px; font-weight: 800; color: var(--text-1);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .dorm-title .pulse {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--neon-pink);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255,59,123,0.6); }
+    50% { opacity: 0.6; box-shadow: 0 0 0 8px rgba(255,59,123,0); }
+  }
+  .dorm-time { font-size: 11px; color: var(--text-3); }
+  .dorm-time strong { color: var(--neon-cyan); font-family: 'Orbitron', sans-serif; }
+
+  .dorm-list { display: grid; gap: 6px; }
+  .dorm-row {
+    display: grid; grid-template-columns: 24px 1fr auto; gap: 10px; align-items: center;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    font-size: 12px;
+  }
+  .dorm-row .rank { font-family: 'Orbitron', sans-serif; font-weight: 800; color: var(--text-3); }
+  .dorm-row.top1 .rank { color: var(--accent); }
+  .dorm-row.mine { background: rgba(255,59,123,0.15); border: 1px solid rgba(255,59,123,0.30); }
+  .dorm-row .name { font-weight: 700; color: var(--text-1); }
+  .dorm-row .pts { font-family: 'Orbitron', sans-serif; font-weight: 800; color: var(--neon-cyan); }
+
+  /* ============================================================
+     PAGE: ACHIEVEMENT
+     ============================================================ */
+  .pass-card {
+    background: linear-gradient(135deg, #2C1652 0%, #0A1F36 100%);
+    border: 1px solid rgba(157,92,255,0.40);
+    border-radius: var(--rad-lg);
+    padding: 16px;
+    position: relative; overflow: hidden;
+  }
+  .pass-card::before {
+    content: ''; position: absolute; right: -30px; top: -30px;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, var(--neon-pink), transparent 70%);
+    opacity: .4;
+  }
+  .pass-head { display: flex; justify-content: space-between; align-items: flex-start; }
+  .pass-head .label {
+    font-size: 10px; font-weight: 800; letter-spacing: 1px;
+    color: var(--neon-pink);
+  }
+  .pass-head .season {
+    font-size: 18px; font-weight: 900; color: var(--text-1);
+    font-family: 'Orbitron', 'Noto Sans SC', sans-serif;
+  }
+  .pass-head .desc { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .pass-end {
+    text-align: right; font-size: 11px; color: var(--text-3);
+  }
+  .pass-end strong { color: var(--neon-cyan); font-family: 'Orbitron', sans-serif; }
+
+  .pass-progress {
+    margin-top: 14px;
+    display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center;
+  }
+  .pass-progress .bar {
+    height: 8px; border-radius: 999px;
+    background: rgba(255,255,255,0.10);
+    overflow: hidden;
+  }
+  .pass-progress .bar .fill {
+    height: 100%; width: 42%;
+    background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple));
+    border-radius: 999px;
+  }
+  .pass-progress .lv {
+    font-size: 11px; color: var(--text-2);
+  }
+  .pass-progress .lv strong { color: var(--text-1); font-family: 'Orbitron', sans-serif; font-size: 14px; }
+
+  .pass-rewards {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+    margin-top: 14px;
+  }
+  .pass-tile {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    display: grid; place-items: center;
+    font-size: 22px;
+    position: relative;
+  }
+  .pass-tile .rank-mark {
+    position: absolute; top: 2px; left: 4px;
+    font-size: 9px; font-weight: 800; color: var(--text-3);
+    font-family: 'Orbitron', sans-serif;
+  }
+  .pass-tile.unlocked {
+    background: rgba(255,209,0,0.15); border-color: rgba(255,209,0,0.40);
+  }
+  .pass-tile.unlocked .rank-mark { color: var(--accent); }
+  .pass-tile.current {
+    background: rgba(255,59,123,0.15); border-color: rgba(255,59,123,0.40);
+    box-shadow: 0 0 0 2px rgba(255,59,123,0.20);
+  }
+  .pass-tile.locked { opacity: 0.5; }
+  .pass-tile.locked::after {
+    content: '🔒'; position: absolute; top: 2px; right: 4px;
+    font-size: 10px;
+  }
+
+  .badge-tabs {
+    display: flex; gap: 6px; overflow-x: auto;
+    padding: 0 4px 4px; margin: 4px 0 12px;
+    scrollbar-width: none;
+  }
+  .badge-tabs::-webkit-scrollbar { display: none; }
+  .badge-tab {
+    flex-shrink: 0;
+    padding: 6px 14px; border-radius: 999px;
+    background: var(--bg-elev-1); border: 1px solid var(--line);
+    font-size: 12px; color: var(--text-3); font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge-tab.active { background: var(--accent); color: #1a1206; border-color: var(--accent); }
+
+  .badge-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  }
+  .badge-card {
+    aspect-ratio: 1 / 1.18;
+    background: var(--bg-elev-1);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 10px 6px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .badge-card .b-icon {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 26px;
+    background: var(--grad-card);
+    border: 1px solid var(--line);
+    position: relative;
+  }
+  .badge-card.legendary .b-icon { background: var(--grad-warm); }
+  .badge-card.epic .b-icon { background: var(--grad-pink); }
+  .badge-card.rare .b-icon { background: var(--grad-cool); }
+  .badge-card.common .b-icon { background: rgba(255,255,255,0.08); }
+  .badge-card.locked { opacity: 0.45; }
+  .badge-card.locked .b-icon { background: rgba(255,255,255,0.05); filter: grayscale(1); }
+  .badge-card .b-name {
+    font-size: 11px; font-weight: 700; color: var(--text-1); margin-top: 2px;
+  }
+  .badge-card .b-rarity {
+    font-size: 9px; color: var(--text-3); font-weight: 700; letter-spacing: .4px;
+  }
+  .badge-card.legendary .b-rarity { color: var(--accent); }
+  .badge-card.epic .b-rarity { color: var(--neon-pink); }
+  .badge-card.rare .b-rarity { color: var(--neon-cyan); }
+  .badge-card .b-progress {
+    position: absolute; left: 8px; right: 8px; bottom: 8px;
+    height: 3px; border-radius: 999px;
+    background: rgba(255,255,255,0.08); overflow: hidden;
+  }
+  .badge-card .b-progress .fill { height: 100%; background: var(--accent); }
+  .badge-card.legendary::before {
+    content: ''; position: absolute; inset: -1px;
+    background: conic-gradient(from 0deg, transparent, var(--accent), transparent);
+    animation: rotate 4s linear infinite; z-index: -1;
+  }
+
+  /* ============================================================
+     PAGE: SHOP
+     ============================================================ */
+  .shop-banner {
+    background:
+      radial-gradient(circle at 20% 30%, rgba(255,209,0,0.30), transparent 60%),
+      linear-gradient(135deg, #3D2A0A 0%, #1A1230 100%);
+    border: 1px solid rgba(255,209,0,0.30);
+    border-radius: var(--rad-lg);
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    position: relative; overflow: hidden;
+    margin-top: 4px;
+  }
+  .shop-banner .icon {
+    width: 50px; height: 50px; border-radius: 14px;
+    background: var(--grad-warm);
+    display: grid; place-items: center; font-size: 26px;
+    color: #2a1c00;
+  }
+  .shop-banner .title { font-size: 14px; font-weight: 800; color: var(--text-1); }
+  .shop-banner .subtitle { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+  .shop-banner .cta {
+    padding: 7px 14px; border-radius: 999px;
+    background: var(--accent); color: #1a1206;
+    font-size: 12px; font-weight: 800;
+  }
+
+  .shop-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .shop-card {
+    background: var(--bg-elev-1);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 12px;
+    display: flex; flex-direction: column; gap: 8px;
+    position: relative; overflow: hidden;
+  }
+  .shop-card .preview {
+    aspect-ratio: 1 / 0.72;
+    border-radius: 12px;
+    display: grid; place-items: center;
+    font-size: 36px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  }
+  .shop-card.sk1 .preview { background: linear-gradient(135deg, rgba(255,138,61,0.20), rgba(255,59,123,0.20)); }
+  .shop-card.sk2 .preview { background: linear-gradient(135deg, rgba(0,229,255,0.20), rgba(157,92,255,0.20)); }
+  .shop-card.sk3 .preview { background: linear-gradient(135deg, rgba(46,230,166,0.20), rgba(0,229,255,0.20)); }
+  .shop-card.sk4 .preview { background: linear-gradient(135deg, rgba(157,92,255,0.20), rgba(255,59,123,0.20)); }
+
+  .shop-card .name { font-size: 13px; font-weight: 700; color: var(--text-1); }
+  .shop-card .desc { font-size: 10px; color: var(--text-3); }
+  .shop-card .footer {
+    margin-top: 4px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .shop-card .price {
+    font-size: 14px; font-weight: 800; font-family: 'Orbitron', sans-serif;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 4px;
+  }
+  .shop-card .price .coin { color: var(--neon-orange); }
+  .shop-card .btn-buy {
+    padding: 5px 10px; border-radius: 999px;
+    background: var(--accent); color: #1a1206;
+    font-size: 11px; font-weight: 800;
+  }
+  .shop-card .ribbon {
+    position: absolute; top: 8px; right: 8px;
+    padding: 2px 7px; border-radius: 4px;
+    font-size: 9px; font-weight: 800; letter-spacing: .3px;
+    background: var(--neon-pink); color: #fff;
+  }
+  .shop-card .ribbon.legend { background: var(--grad-warm); color: #2a1c00; }
+  .shop-card .ribbon.new { background: var(--neon-green); color: #07211a; }
+
+  /* real reward */
+  .reward-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px;
+    background: var(--bg-elev-1); border: 1px solid var(--line);
+    border-radius: 14px;
+    position: relative; overflow: hidden;
+  }
+  .reward-row .brand {
+    width: 56px; height: 56px; border-radius: 14px;
+    display: grid; place-items: center;
+    font-weight: 900; color: #1a1206;
+    background: var(--grad-warm);
+    flex-shrink: 0;
+    font-size: 12px; text-align: center; line-height: 1.1;
+    box-shadow: var(--shadow-glow-y);
+  }
+  .reward-row .info { flex: 1; min-width: 0; }
+  .reward-row .name { font-size: 13px; font-weight: 700; color: var(--text-1); }
+  .reward-row .desc { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .reward-row .stock {
+    margin-top: 4px;
+    height: 4px; border-radius: 999px;
+    background: rgba(255,255,255,0.08); overflow: hidden;
+  }
+  .reward-row .stock .fill { height: 100%; background: var(--accent); }
+  .reward-row .stock-text { font-size: 9px; color: var(--text-3); margin-top: 2px; }
+  .reward-row .btn-redeem {
+    padding: 8px 14px; border-radius: 999px;
+    background: var(--accent); color: #1a1206;
+    font-size: 12px; font-weight: 800; flex-shrink: 0;
+  }
+  .reward-row .price-box {
+    text-align: right; flex-shrink: 0;
+  }
+  .reward-row .price-box .num {
+    font-size: 16px; font-weight: 900; color: var(--accent);
+    font-family: 'Orbitron', sans-serif;
+  }
+  .reward-row .price-box .lbl { font-size: 10px; color: var(--text-3); }
+
+  /* ============================================================
+     PAGE: PROFILE
+     ============================================================ */
+  .profile-hero {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255,59,123,0.25), transparent 60%),
+      linear-gradient(180deg, #1A1235 0%, #0A0E1A 100%);
+    border: 1px solid var(--line);
+    border-radius: var(--rad-lg);
+    padding: 18px 16px 14px;
+    text-align: center;
+  }
+  .profile-hero .av {
+    width: 88px; height: 88px; border-radius: 26px;
+    margin: 0 auto;
+    background: var(--grad-pink);
+    display: grid; place-items: center;
+    font-size: 44px;
+    box-shadow: 0 14px 30px rgba(255,59,123,0.40), inset 0 6px 12px rgba(255,255,255,0.40);
+  }
+  .profile-hero .nick { font-size: 19px; font-weight: 800; color: var(--text-1); margin-top: 10px; }
+  .profile-hero .uid { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .profile-hero .titles {
+    display: flex; gap: 6px; justify-content: center; margin-top: 10px; flex-wrap: wrap;
+  }
+  .profile-hero .titles .t {
+    padding: 3px 10px; border-radius: 999px;
+    font-size: 10px; font-weight: 700; letter-spacing: .3px;
+  }
+  .profile-hero .titles .t.gold { background: rgba(255,209,0,0.15); color: var(--accent); border: 1px solid rgba(255,209,0,0.30); }
+  .profile-hero .titles .t.cyan { background: rgba(0,229,255,0.15); color: var(--neon-cyan); border: 1px solid rgba(0,229,255,0.30); }
+  .profile-hero .titles .t.pink { background: rgba(255,59,123,0.15); color: var(--neon-pink); border: 1px solid rgba(255,59,123,0.30); }
+
+  .stat-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .stat-row .cell { text-align: center; }
+  .stat-row .cell .num { font-size: 20px; font-weight: 900; font-family: 'Orbitron', sans-serif; color: var(--text-1); }
+  .stat-row .cell .lbl { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+
+  .menu-list { display: grid; gap: 8px; }
+  .menu-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px;
+    background: var(--bg-elev-1);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+  .menu-row .m-icon {
+    width: 36px; height: 36px; border-radius: 12px;
+    display: grid; place-items: center;
+    font-size: 18px;
+    background: rgba(255,255,255,0.06); flex-shrink: 0;
+  }
+  .menu-row .m-text { flex: 1; min-width: 0; }
+  .menu-row .m-text .t { font-size: 13px; font-weight: 700; color: var(--text-1); }
+  .menu-row .m-text .s { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+  .menu-row .arrow { color: var(--text-3); font-size: 18px; flex-shrink: 0; }
+
+  /* ============================================================
+     OVERLAYS / MODAL (workout result)
+     ============================================================ */
+  .modal-mask {
+    position: absolute; inset: 0;
+    background: rgba(5, 8, 16, 0.78);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 20px;
+    z-index: 100;
+  }
+  .modal-mask.show { display: flex; animation: maskIn .3s ease; }
+  @keyframes maskIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .result-card {
+    width: 100%; max-width: 360px;
+    background: linear-gradient(180deg, #1A1235 0%, #0A0E1A 100%);
+    border: 1px solid rgba(255,209,0,0.30);
+    border-radius: 24px;
+    padding: 22px 20px;
+    text-align: center;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(255,209,0,0.20);
+    animation: popIn .5s cubic-bezier(.2,.7,.2,1);
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.85) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .result-title {
+    font-family: 'Orbitron', 'Noto Sans SC', sans-serif;
+    font-size: 22px; font-weight: 900;
+    background: var(--grad-warm);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+    letter-spacing: 2px;
+  }
+  .result-sub { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+  .result-trophy {
+    width: 90px; height: 90px; margin: 14px auto 12px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 50px;
+    background: var(--grad-warm);
+    box-shadow: 0 0 0 6px rgba(255,209,0,0.16), 0 12px 30px rgba(255,209,0,0.40);
+    animation: bounce 2s ease-in-out infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .result-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    margin-top: 8px;
+  }
+  .result-stats .item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 6px;
+  }
+  .result-stats .item .lbl { font-size: 10px; color: var(--text-3); }
+  .result-stats .item .num {
+    font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px;
+    margin-top: 2px;
+  }
+  .result-stats .item.xp .num { color: var(--accent); }
+  .result-stats .item.gold .num { color: var(--neon-orange); }
+  .result-stats .item.attr .num { color: var(--neon-pink); }
+
+  .result-drop {
+    margin-top: 12px;
+    background: rgba(255,209,0,0.08);
+    border: 1px dashed rgba(255,209,0,0.40);
+    border-radius: 12px;
+    padding: 10px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .result-drop .e {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: var(--grad-warm);
+    display: grid; place-items: center;
+    font-size: 22px; color: #2a1c00; flex-shrink: 0;
+  }
+  .result-drop .text { flex: 1; min-width: 0; text-align: left; }
+  .result-drop .text .name {
+    font-size: 12px; font-weight: 800; color: var(--accent);
+  }
+  .result-drop .text .desc { font-size: 10px; color: var(--text-3); margin-top: 1px; }
+
+  .result-actions {
+    margin-top: 16px;
+    display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px;
+  }
+  .btn-primary {
+    height: 44px; border-radius: 14px;
+    background: var(--accent); color: #1a1206;
+    font-weight: 800; font-size: 14px;
+  }
+  .btn-secondary {
+    height: 44px; border-radius: 14px;
+    background: rgba(255,255,255,0.06);
+    color: var(--text-1); font-weight: 700; font-size: 13px;
+    border: 1px solid var(--line);
+  }
+
+  /* workout in-progress overlay */
+  .progress-screen {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #0A0E1A 0%, #1A1235 100%);
+    display: none;
+    flex-direction: column;
+    z-index: 95;
+    animation: maskIn .3s ease;
+  }
+  .progress-screen.show { display: flex; }
+  .progress-screen .ps-top {
+    padding: 50px 24px 0;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .progress-screen .ps-top .name {
+    font-size: 13px; font-weight: 800; color: var(--text-1);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .progress-screen .ps-top .quit {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    display: grid; place-items: center;
+  }
+  .progress-screen .ps-mid {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 18px;
+  }
+  .progress-screen .ring {
+    width: 240px; height: 240px;
+    position: relative;
+  }
+  .progress-screen .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .progress-screen .ring .ring-bg {
+    fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 12;
+  }
+  .progress-screen .ring .ring-fg {
+    fill: none; stroke: url(#ringGrad); stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 691.15;
+    stroke-dashoffset: 207.34;
+    filter: drop-shadow(0 0 8px rgba(255,209,0,0.5));
+    transition: stroke-dashoffset 1s ease;
+  }
+  .progress-screen .ring .center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .progress-screen .ring .time {
+    font-family: 'Orbitron', sans-serif; font-size: 38px; font-weight: 900;
+    color: var(--text-1);
+  }
+  .progress-screen .ring .label {
+    font-size: 11px; color: var(--text-3); letter-spacing: 1px; text-transform: uppercase;
+  }
+  .progress-screen .ps-stats {
+    display: flex; gap: 28px;
+  }
+  .progress-screen .ps-stats .col { text-align: center; }
+  .progress-screen .ps-stats .v { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 22px; color: var(--accent); }
+  .progress-screen .ps-stats .l { font-size: 10px; color: var(--text-3); margin-top: 2px; }
+
+  .progress-screen .ps-tip {
+    font-size: 12px; color: var(--text-2);
+    background: rgba(0,229,255,0.10);
+    border: 1px solid rgba(0,229,255,0.30);
+    padding: 8px 14px; border-radius: 999px;
+    margin: 0 24px;
+  }
+  .progress-screen .ps-bottom {
+    padding: 0 24px 30px;
+    display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px;
+  }
+
+  /* live workout metrics */
+  .ps-metrics {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    width: 100%; padding: 0 24px;
+  }
+  .ps-metrics .m-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 10px 6px; text-align: center;
+  }
+  .ps-metrics .m-num {
+    font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 20px;
+    color: var(--text-1);
+    transition: color .25s ease;
+  }
+  .ps-metrics .m-lbl { font-size: 10px; color: var(--text-3); margin-top: 2px; letter-spacing: 1px; }
+
+  /* heart rate waveform */
+  .ps-hr {
+    width: calc(100% - 48px); margin: 0 24px;
+    background: linear-gradient(135deg, rgba(255,59,123,0.10), rgba(157,92,255,0.05));
+    border: 1px solid rgba(255,59,123,0.25);
+    border-radius: 14px;
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .ps-hr .hr-left { flex-shrink: 0; }
+  .ps-hr .hr-num {
+    font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 22px;
+    color: var(--neon-pink);
+    line-height: 1;
+  }
+  .ps-hr .hr-num .hr-unit { font-size: 10px; color: var(--text-3); margin-left: 3px; font-family: inherit; font-weight: 600; }
+  .ps-hr .hr-tag {
+    font-size: 10px; color: var(--neon-pink); margin-top: 2px;
+    font-weight: 700;
+  }
+  .ps-hr .hr-wave { flex: 1; height: 36px; }
+  .ps-hr .hr-wave path {
+    filter: drop-shadow(0 0 4px rgba(255,59,123,0.5));
+  }
+
+  /* live route map */
+  .ps-map {
+    width: calc(100% - 48px); margin: 0 24px;
+    background: linear-gradient(135deg, rgba(0,229,255,0.06), rgba(46,230,166,0.04));
+    border: 1px solid rgba(0,229,255,0.20);
+    border-radius: 14px;
+    padding: 8px;
+    display: none;
+  }
+  .ps-map.show { display: block; }
+  .ps-map svg { width: 100%; height: 80px; display: block; }
+  .ps-map .map-label {
+    font-size: 10px; color: var(--text-3);
+    padding: 4px 4px 0; letter-spacing: 0.5px;
+  }
+  #routeRunner {
+    transition: all 0.15s ease;
+    filter: drop-shadow(0 0 4px rgba(255,209,0,0.8));
+  }
+
+  /* notification toast queue */
+  .toast-stack {
+    position: absolute;
+    top: 50px; left: 12px; right: 12px;
+    z-index: 150;
+    pointer-events: none;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .toast {
+    pointer-events: auto;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(15, 18, 35, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    display: flex; align-items: center; gap: 10px;
+    transform: translateY(-20px); opacity: 0;
+    transition: all .35s cubic-bezier(.2,.7,.2,1);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.exit { transform: translateY(-10px); opacity: 0; }
+  .toast .ti {
+    width: 32px; height: 32px; border-radius: 10px;
+    display: grid; place-items: center; flex-shrink: 0; font-size: 16px;
+  }
+  .toast .tt { flex: 1; min-width: 0; }
+  .toast .tt .title { font-size: 12px; font-weight: 800; color: var(--text-1); }
+  .toast .tt .desc { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+  .toast.success .ti { background: rgba(46,230,166,0.18); color: var(--neon-green); }
+  .toast.warn .ti { background: rgba(255,138,61,0.18); color: var(--neon-orange); }
+  .toast.info .ti { background: rgba(0,229,255,0.18); color: var(--neon-cyan); }
+  .toast.gold .ti { background: var(--grad-warm); color: #1a1206; }
+
+  /* purchase confirm modal */
+  .confirm-modal {
+    position: absolute; inset: 0;
+    background: rgba(5, 8, 16, 0.78);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: flex-end; justify-content: center;
+    z-index: 110;
+  }
+  .confirm-modal.show { display: flex; animation: maskIn .25s ease; }
+  .confirm-card {
+    width: 100%;
+    background: linear-gradient(180deg, #1A1235 0%, #0A0E1A 100%);
+    border-top: 1px solid rgba(255,255,255,0.10);
+    border-radius: 24px 24px 0 0;
+    padding: 22px 20px 30px;
+    animation: slideUp .3s cubic-bezier(.2,.7,.2,1);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .confirm-card .ch {
+    text-align: center;
+  }
+  .confirm-card .ch .icon {
+    width: 64px; height: 64px; margin: 0 auto 8px;
+    border-radius: 18px; display: grid; place-items: center; font-size: 32px;
+    background: var(--grad-warm); color: #2a1c00;
+  }
+  .confirm-card .ch .title { font-size: 16px; font-weight: 800; color: var(--text-1); }
+  .confirm-card .ch .price-line {
+    margin-top: 8px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .confirm-card .ch .price-line .p {
+    font-size: 24px; font-weight: 900; color: var(--accent);
+    font-family: 'Orbitron', sans-serif;
+  }
+  .confirm-card .ch .balance {
+    margin-top: 4px; font-size: 11px; color: var(--text-3);
+  }
+  .confirm-card .ch .balance.danger { color: var(--neon-pink); }
+  .confirm-card .desc {
+    margin-top: 14px;
+    font-size: 12px; color: var(--text-2);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+  }
+  .confirm-card .actions {
+    margin-top: 16px;
+    display: grid; grid-template-columns: 1fr 1.2fr; gap: 10px;
+  }
+
+  /* AI coach card */
+  .coach-card {
+    background:
+      radial-gradient(circle at 100% 0%, rgba(0,229,255,0.20), transparent 50%),
+      linear-gradient(135deg, #0E2A36 0%, #0A1029 100%);
+    border: 1px solid rgba(0,229,255,0.25);
+    border-radius: var(--rad-lg);
+    padding: 14px;
+    display: flex; gap: 12px;
+    align-items: flex-start;
+    position: relative; overflow: hidden;
+  }
+  .coach-card .ai-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    display: grid; place-items: center; font-size: 22px;
+    background: var(--grad-cool);
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,229,255,0.30);
+  }
+  .coach-card .ai-icon::after {
+    content: ''; position: absolute; width: 8px; height: 8px;
+    background: var(--neon-green); border-radius: 50%;
+    border: 2px solid #0E2A36;
+    margin-left: 24px; margin-top: 24px;
+  }
+  .coach-card .ai-body { flex: 1; min-width: 0; }
+  .coach-card .ai-name {
+    font-size: 12px; font-weight: 800; color: var(--neon-cyan);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .coach-card .ai-name .badge {
+    font-size: 9px; font-weight: 700; padding: 1px 5px;
+    background: rgba(0,229,255,0.18); border-radius: 4px;
+  }
+  .coach-card .ai-msg {
+    margin-top: 4px; font-size: 13px; line-height: 1.45; color: var(--text-1);
+  }
+  .coach-card .ai-msg strong { color: var(--accent); }
+  .coach-card .ai-actions {
+    margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .coach-card .ai-action {
+    padding: 5px 10px; border-radius: 999px;
+    background: rgba(0,229,255,0.10); color: var(--neon-cyan);
+    font-size: 11px; font-weight: 700;
+    border: 1px solid rgba(0,229,255,0.25);
+  }
+  .coach-card .ai-action:hover { background: rgba(0,229,255,0.20); }
+
+  .live-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 6px; border-radius: 4px;
+    background: rgba(255,59,123,0.15); color: var(--neon-pink);
+    font-size: 9px; font-weight: 800;
+    margin-left: 4px;
+  }
+  .live-tag::before {
+    content: ''; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--neon-pink);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+
+  /* level up flash */
+  .level-up-toast {
+    position: absolute; top: 70px; left: 50%; transform: translateX(-50%) translateY(-30px);
+    padding: 10px 18px;
+    background: var(--grad-warm);
+    color: #1a1206;
+    border-radius: 999px;
+    font-weight: 900; font-size: 13px;
+    box-shadow: 0 12px 30px rgba(255,209,0,0.40);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 200;
+    transition: all .35s cubic-bezier(.2,.7,.2,1);
+  }
+  .level-up-toast.show {
+    opacity: 1; transform: translateX(-50%) translateY(0);
+  }
+
+  /* fly in coin animation */
+  @keyframes coinPop {
+    0% { transform: scale(0) rotate(0deg); opacity: 0; }
+    50% { transform: scale(1.3) rotate(180deg); opacity: 1; }
+    100% { transform: scale(1) rotate(360deg); opacity: 1; }
+  }
+  .coin-pop { animation: coinPop .55s ease; }
+
+  /* utility */
+  .row-flex { display: flex; align-items: center; }
+  .gap-6 { gap: 6px; } .gap-8 { gap: 8px; } .gap-10 { gap: 10px; } .gap-12 { gap: 12px; }
+  .mt-8 { margin-top: 8px; } .mt-10 { margin-top: 10px; } .mt-12 { margin-top: 12px; } .mt-14 { margin-top: 14px; }
+  .text-dim { color: var(--text-3); }
+
+  /* ============================================================
+     SVG ICON DEFS
+     ============================================================ */
+  .icon-svg { display: inline-block; vertical-align: middle; }
+</style>
+</head>
+<body>
+  <!-- shared SVG defs -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#FFD100"/>
+        <stop offset="50%" stop-color="#FF8A3D"/>
+        <stop offset="100%" stop-color="#FF3B7B"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div class="stage">
+    <!-- desktop side panel -->
+    <div class="stage-side">
+      <div class="logo">
+        <div class="logo-mark">B</div>
+        <div>
+          <div style="font-family:'Orbitron'; font-weight:800; color:var(--text-1); font-size:16px; letter-spacing:2px;">BURNIFY</div>
+          <div style="font-size:11px; color:var(--text-3);">校园运动养成RPG</div>
+        </div>
+      </div>
+      <h1>让<span class="accent">运动</span><br/>变成一场<br/>校园 RPG。</h1>
+      <p class="tagline">把跑步、撸铁、球类、瑜伽变成升级、掉落、组队、对战。让大学生从「不想动」到「停不下来」。</p>
+      <ul class="features">
+        <li><span class="dot"></span>四维属性养成 · 力量 / 敏捷 / 耐力 / 意志</li>
+        <li><span class="dot"></span>运动副本掉落 · 装备、皮肤、技能</li>
+        <li><span class="dot"></span>宿舍领地战 · 周赛季对抗</li>
+        <li><span class="dot"></span>美团真实奖励 · 健身房券、外卖红包、运动装备</li>
+        <li><span class="dot"></span>AI 教练 · 根据数据推荐次日训练</li>
+      </ul>
+      <div class="meta">
+        美团校招 AI 编程考察 · 命题：游戏化运动激励工具<br/>
+        作者 · salah · 2026.05<br/>
+        ※ 本页为单文件 HTML 原型，可直接部署到 NoCode / 任意静态托管平台
+      </div>
+    </div>
+
+    <!-- phone -->
+    <div class="phone" id="phone">
+
+      <!-- iOS-style status bar (live) -->
+      <div class="status-bar">
+        <span id="sysClock">--:--</span>
+        <div class="right">
+          <svg viewBox="0 0 18 12" fill="none"><path d="M1 8h2v3H1zM5 6h2v5H5zM9 4h2v7H9zM13 2h2v9h-2z" fill="currentColor"/></svg>
+          <svg viewBox="0 0 16 12" fill="none"><path d="M8 2C5 2 2.5 3.3 1 5l1.5 1.5C3.7 5.5 5.7 4.5 8 4.5s4.3 1 5.5 2L15 5C13.5 3.3 11 2 8 2zm0 4c-1.7 0-3 .8-4 1.8L5.5 9.3C6.2 8.6 7 8.2 8 8.2s1.8.4 2.5 1.1L12 7.8C11 6.8 9.7 6 8 6zm0 4l2 2 2-2c-.6-.6-1.3-1-2-1s-1.4.4-2 1z" fill="currentColor"/></svg>
+          <span id="batteryNum" style="font-size:11px; font-weight:700; color:var(--text-2);">82%</span>
+          <svg viewBox="0 0 24 12" fill="none">
+            <rect x="1" y="2" width="20" height="8" rx="2" stroke="currentColor" stroke-width="1" fill="none"/>
+            <rect id="batteryBar" x="2.5" y="3.5" width="15" height="5" rx="0.5" fill="currentColor"/>
+            <rect x="22" y="4.5" width="1.5" height="3" rx="0.5" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- universal header -->
+      <header class="app-header">
+        <div class="left" data-tab="page-me" style="cursor:pointer;">
+          <div class="avatar-mini">阿</div>
+          <div class="greet">
+            <div class="hi" id="greetText">下午好</div>
+            <div class="name">阿燃 <span class="badge" id="hdLevel">⚡ Lv.27</span></div>
+          </div>
+        </div>
+        <div class="actions">
+          <span class="resource-pill gold"><span class="icon">¥</span><span id="hdGold">2,840</span></span>
+          <span class="resource-pill energy"><span class="icon">⚡</span><span id="hdEnergy">4/5</span></span>
+          <button class="pill-icon" aria-label="消息">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- viewport -->
+      <main class="viewport" id="viewport">
+
+        <!-- =====================================================
+             PAGE: HOME
+             ===================================================== -->
+        <section class="page active" id="page-home">
+
+          <!-- hero character card -->
+          <div class="hero">
+            <div class="hero-top">
+              <div class="hero-class">⚔️ 职业 · 风行剑客</div>
+              <div class="hero-season">
+                赛季 · <strong>S2 樱花觉醒</strong><br/>
+                <span style="color:var(--text-3)">还剩 <span id="seasonCd">18D 06:23:42</span></span>
+              </div>
+            </div>
+            <div class="hero-body">
+              <div class="avatar-3d">
+                <span class="figure" id="heroFig">🦊</span>
+                <span class="level-tag"><span id="heroLv">Lv.27</span> · 精英</span>
+              </div>
+              <div class="hero-info">
+                <div class="nick">阿燃 <span class="gender">♂</span></div>
+                <div class="title-tag">称号「夜跑追光者」</div>
+                <div class="xp-bar"><div class="fill" id="heroXpFill" style="width:68%"></div></div>
+                <div class="xp-meta">
+                  <span>EXP <strong id="heroXpCur">2,720</strong> / <span id="heroXpMax">4,000</span></span>
+                  <span>距下一级 <strong id="heroXpLeft">1,280</strong></span>
+                </div>
+              </div>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-cell str">
+                <div class="name">力量 STR</div>
+                <div class="value">68</div>
+                <div class="delta up">+2 ↑</div>
+              </div>
+              <div class="stat-cell agi">
+                <div class="name">敏捷 AGI</div>
+                <div class="value">82</div>
+                <div class="delta up">+5 ↑</div>
+              </div>
+              <div class="stat-cell vit">
+                <div class="name">耐力 VIT</div>
+                <div class="value">74</div>
+                <div class="delta up">+3 ↑</div>
+              </div>
+              <div class="stat-cell wil">
+                <div class="name">意志 WIL</div>
+                <div class="value">59</div>
+                <div class="delta">--</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- resource summary -->
+          <div class="res-row">
+            <div class="res-card gold">
+              <div class="icon-circle">🪙</div>
+              <div class="info"><div class="label">燃币</div><div class="num" id="resGoldNum">2,840</div></div>
+            </div>
+            <div class="res-card energy">
+              <div class="icon-circle">⚡</div>
+              <div class="info">
+                <div class="label">能量 · 下次回 <span id="energyRegen">42:18</span></div>
+                <div class="num" id="resEnergyNum">4 / 5</div>
+              </div>
+            </div>
+            <div class="res-card streak">
+              <div class="icon-circle">🔥</div>
+              <div class="info"><div class="label">连续</div><div class="num" id="resStreakNum">18 天</div></div>
+            </div>
+          </div>
+
+          <!-- AI coach -->
+          <div class="coach-card mt-12" id="coachCard">
+            <div class="ai-icon">🤖</div>
+            <div class="ai-body">
+              <div class="ai-name">AI 教练 · 阿练 <span class="badge">在线</span> <span class="live-tag">实时</span></div>
+              <div class="ai-msg" id="coachMsg">分析你最近 7 天数据 — 撸铁次数偏少，今天建议来一组「钢铁锻炉」补一下力量值，能解锁专属称号 🦁。</div>
+              <div class="ai-actions">
+                <button class="ai-action" data-tab="page-workout">⚔️ 立即开练</button>
+                <button class="ai-action" id="coachReroll">🔄 换个建议</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- streak calendar -->
+          <div class="section-title">
+            <h2>本周打卡</h2>
+            <a class="more">详情 →</a>
+          </div>
+          <div class="streak-row">
+            <div class="streak-day done"><div class="dot"></div><span class="label">一</span></div>
+            <div class="streak-day done"><div class="dot"></div><span class="label">二</span></div>
+            <div class="streak-day done"><div class="dot"></div><span class="label">三</span></div>
+            <div class="streak-day done"><div class="dot"></div><span class="label">四</span></div>
+            <div class="streak-day today"><div class="dot">5</div><span class="label">五</span></div>
+            <div class="streak-day"><div class="dot">6</div><span class="label">六</span></div>
+            <div class="streak-day"><div class="dot">7</div><span class="label">日</span></div>
+          </div>
+
+          <!-- today's quests -->
+          <div class="section-title">
+            <h2>今日任务 <span style="color:var(--text-3); font-weight:500; font-size:12px">2/4 已完成</span></h2>
+            <a class="more">全部 →</a>
+          </div>
+          <div class="quest-list">
+            <div class="quest-item q1 done">
+              <div class="icon">🏃</div>
+              <div class="body">
+                <div class="title">完成 3km 跑步 <span class="quest-tag daily">日常</span></div>
+                <div class="desc">已完成 · 用时 18:42</div>
+                <div class="progress-bar"><div class="fill" style="width:100%"></div></div>
+              </div>
+              <div class="reward">
+                <div class="xp">✓ +120 XP</div>
+                <div class="progress-text">已领取</div>
+              </div>
+            </div>
+            <div class="quest-item q2 done">
+              <div class="icon">💧</div>
+              <div class="body">
+                <div class="title">每天 8 杯水 <span class="quest-tag daily">日常</span></div>
+                <div class="desc">健康加成 +2 意志</div>
+                <div class="progress-bar"><div class="fill" style="width:100%"></div></div>
+              </div>
+              <div class="reward">
+                <div class="xp">✓ +30 XP</div>
+                <div class="progress-text">已领取</div>
+              </div>
+            </div>
+            <div class="quest-item q3">
+              <div class="icon">🏋️</div>
+              <div class="body">
+                <div class="title">力量训练 30 分钟 <span class="quest-tag">本周</span></div>
+                <div class="desc">已 12 / 30 分钟 · 加成 +力量</div>
+                <div class="progress-bar"><div class="fill" style="width:40%"></div></div>
+              </div>
+              <div class="reward">
+                <div class="xp">+200 XP</div>
+                <div class="progress-text">12/30 min</div>
+              </div>
+            </div>
+            <div class="quest-item q4">
+              <div class="icon">👯</div>
+              <div class="body">
+                <div class="title">和好友一起开练 <span class="quest-tag team">组队</span></div>
+                <div class="desc">邀请 1 位好友共同打卡</div>
+                <div class="progress-bar"><div class="fill" style="width:0"></div></div>
+              </div>
+              <div class="reward">
+                <div class="xp">+150 XP</div>
+                <div class="progress-text">0/1</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- friend feed -->
+          <div class="section-title">
+            <h2>好友动态</h2>
+            <a class="more">查看全部 →</a>
+          </div>
+          <div class="feed-list">
+            <div class="feed-item">
+              <div class="feed-avatar" style="background:var(--grad-cool)">林</div>
+              <div class="feed-content">
+                <div class="text"><strong>@小林</strong> 在「钢铁锻炉」副本爆出史诗级装备「狂战士护腕」</div>
+                <div class="time">12 分钟前 · 力量 +5</div>
+              </div>
+              <button class="feed-action">👏 1.2k</button>
+            </div>
+            <div class="feed-item">
+              <div class="feed-avatar" style="background:var(--grad-mint)">尔</div>
+              <div class="feed-content">
+                <div class="text"><strong>@尔尔</strong> 完成了 30 天连续打卡，获得「自律之火」称号</div>
+                <div class="time">1 小时前 · 意志 +10</div>
+              </div>
+              <button class="feed-action">🔥 帮顶</button>
+            </div>
+            <div class="feed-item">
+              <div class="feed-avatar" style="background:var(--grad-pink)">熊</div>
+              <div class="feed-content">
+                <div class="text"><strong>@小熊</strong> 邀请你参加「7号宿舍楼 vs 9号宿舍楼」对抗赛</div>
+                <div class="time">2 小时前 · 还剩 6:24:18</div>
+              </div>
+              <button class="feed-action">⚔️ 应战</button>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- =====================================================
+             PAGE: WORKOUT
+             ===================================================== -->
+        <section class="page" id="page-workout">
+
+          <div class="energy-card">
+            <div class="icon-big">⚡</div>
+            <div class="info">
+              <div class="label">能量值</div>
+              <div class="value">4 / 5</div>
+              <div class="small">每 50 分钟自然恢复 1 点 · 每次副本消耗 1 点</div>
+            </div>
+            <button class="btn-recharge">⚡ 充能</button>
+          </div>
+
+          <div class="section-title">
+            <h2>今日推荐副本 🔥</h2>
+            <a class="more">AI 智能推荐 →</a>
+          </div>
+          <div class="dungeon-grid">
+
+            <div class="dungeon-card run" data-name="晨跑追光" data-icon="🏃" data-xp="320" data-gold="80" data-time="22:30">
+              <div class="dungeon-icon">🏃</div>
+              <div class="dungeon-body">
+                <div class="dungeon-name">晨跑追光</div>
+                <div class="dungeon-type">跑步副本 · 推荐 5km · ~25 分钟</div>
+                <div class="dungeon-rewards">
+                  <span class="reward-tag xp">+320 XP</span>
+                  <span class="reward-tag gold">+80 燃币</span>
+                  <span class="reward-tag agi">敏捷 +5</span>
+                  <span class="reward-tag vit">耐力 +3</span>
+                </div>
+              </div>
+              <div class="dungeon-meta">
+                <span class="tag hot">🔥 热门</span>
+              </div>
+              <div class="dungeon-go">→</div>
+            </div>
+
+            <div class="dungeon-card iron" data-name="钢铁锻炉" data-icon="🏋️" data-xp="280" data-gold="100" data-time="40:00">
+              <div class="dungeon-icon">🏋️</div>
+              <div class="dungeon-body">
+                <div class="dungeon-name">钢铁锻炉</div>
+                <div class="dungeon-type">力量训练 · 6 组动作 · ~40 分钟</div>
+                <div class="dungeon-rewards">
+                  <span class="reward-tag xp">+280 XP</span>
+                  <span class="reward-tag gold">+100 燃币</span>
+                  <span class="reward-tag str">力量 +8</span>
+                </div>
+              </div>
+              <div class="dungeon-go">→</div>
+            </div>
+
+            <div class="dungeon-card hiit" data-name="极限燃烧" data-icon="🔥" data-xp="400" data-gold="120" data-time="20:00">
+              <div class="dungeon-icon">🔥</div>
+              <div class="dungeon-body">
+                <div class="dungeon-name">极限燃烧</div>
+                <div class="dungeon-type">HIIT 高强度 · 8 轮 · ~20 分钟</div>
+                <div class="dungeon-rewards">
+                  <span class="reward-tag xp">+400 XP</span>
+                  <span class="reward-tag gold">+120 燃币</span>
+                  <span class="reward-tag str">力量 +4</span>
+                  <span class="reward-tag agi">敏捷 +4</span>
+                </div>
+              </div>
+              <div class="dungeon-meta">
+                <span class="tag hot">🔥 双倍</span>
+              </div>
+              <div class="dungeon-go">→</div>
+            </div>
+
+            <div class="dungeon-card ball" data-name="球场争霸" data-icon="🏀" data-xp="260" data-gold="70" data-time="60:00">
+              <div class="dungeon-icon">🏀</div>
+              <div class="dungeon-body">
+                <div class="dungeon-name">球场争霸</div>
+                <div class="dungeon-type">球类运动 · 篮 / 足 / 羽 · ~60 分钟</div>
+                <div class="dungeon-rewards">
+                  <span class="reward-tag xp">+260 XP</span>
+                  <span class="reward-tag gold">+70 燃币</span>
+                  <span class="reward-tag agi">敏捷 +6</span>
+                </div>
+              </div>
+              <div class="dungeon-go">→</div>
+            </div>
+
+            <div class="dungeon-card cycle" data-name="疾风骑行" data-icon="🚴" data-xp="220" data-gold="60" data-time="45:00">
+              <div class="dungeon-icon">🚴</div>
+              <div class="dungeon-body">
+                <div class="dungeon-name">疾风骑行</div>
+                <div class="dungeon-type">骑行 · 校园环绕 ~10km</div>
+                <div class="dungeon-rewards">
+                  <span class="reward-tag xp">+220 XP</span>
+                  <span class="reward-tag gold">+60 燃币</span>
+                  <span class="reward-tag vit">耐力 +5</span>
+                </div>
+              </div>
+              <div class="dungeon-meta">
+                <span class="tag new">NEW</span>
+              </div>
+              <div class="dungeon-go">→</div>
+            </div>
+
+            <div class="dungeon-card yoga" data-name="静心瑜舍" data-icon="🧘" data-xp="180" data-gold="50" data-time="30:00">
+              <div class="dungeon-icon">🧘</div>
+              <div class="dungeon-body">
+                <div class="dungeon-name">静心瑜舍</div>
+                <div class="dungeon-type">瑜伽 / 拉伸 · ~30 分钟</div>
+                <div class="dungeon-rewards">
+                  <span class="reward-tag xp">+180 XP</span>
+                  <span class="reward-tag gold">+50 燃币</span>
+                  <span class="reward-tag wil">意志 +6</span>
+                </div>
+              </div>
+              <div class="dungeon-go">→</div>
+            </div>
+
+          </div>
+
+          <!-- recent log -->
+          <div class="section-title">
+            <h2>最近战绩</h2>
+            <a class="more">本月 →</a>
+          </div>
+          <div class="history-list">
+            <div class="history-item">
+              <div class="h-icon">🏃</div>
+              <div class="info">
+                <div class="name">晨跑追光 · 4.8km</div>
+                <div class="meta">今天 06:42 · 配速 5'12"/km</div>
+              </div>
+              <div class="gain">
+                <div class="xp">+312 XP</div>
+                <div class="time">敏捷 +5</div>
+              </div>
+            </div>
+            <div class="history-item">
+              <div class="h-icon">🏋️</div>
+              <div class="info">
+                <div class="name">钢铁锻炉 · 上肢日</div>
+                <div class="meta">昨天 19:08 · 6 组 · 38 分钟</div>
+              </div>
+              <div class="gain">
+                <div class="xp">+285 XP</div>
+                <div class="time">力量 +8</div>
+              </div>
+            </div>
+            <div class="history-item">
+              <div class="h-icon">🏀</div>
+              <div class="info">
+                <div class="name">球场争霸 · 半场赛</div>
+                <div class="meta">5/8 18:30 · 队友 4 人</div>
+              </div>
+              <div class="gain">
+                <div class="xp">+260 XP</div>
+                <div class="time">敏捷 +6</div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- =====================================================
+             PAGE: BATTLE / SOCIAL
+             ===================================================== -->
+        <section class="page" id="page-battle">
+
+          <!-- friend PK card -->
+          <div class="pk-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-size:13px; font-weight:800; color:var(--text-1)">本周好友 PK</div>
+                <div style="font-size:11px; color:var(--text-3); margin-top:2px;">距结算还剩 <strong style="color:var(--neon-cyan)" id="pkCd">2D 13:24:08</strong></div>
+              </div>
+              <div style="padding:4px 10px; border-radius:999px; font-size:10px; font-weight:800; color:var(--neon-pink); background:rgba(255,59,123,0.15);">⚔️ 进行中</div>
+            </div>
+            <div class="pk-vs">
+              <div class="pk-side me">
+                <div class="av">阿</div>
+                <div class="nick">阿燃 (我)</div>
+                <div class="pts" id="pkMyPts">2,840</div>
+                <div class="pts-label">积分 PT</div>
+              </div>
+              <div class="pk-vs-mid">VS</div>
+              <div class="pk-side op">
+                <div class="av">林</div>
+                <div class="nick">小林 <span id="opLive" style="font-size:9px; color:var(--neon-pink); margin-left:2px; display:none;">● 跑步中</span></div>
+                <div class="pts" id="pkOpPts">2,210</div>
+                <div class="pts-label">积分 PT</div>
+              </div>
+            </div>
+            <div class="pk-bar">
+              <div class="me-fill" id="pkMyFill"></div>
+              <div class="op-fill" id="pkOpFill"></div>
+            </div>
+            <div class="pk-info">
+              <span>领先 <strong style="color:var(--neon-pink)" id="pkLead">630 PT</strong></span>
+              <span class="stake">🪙 赌注 200 燃币</span>
+            </div>
+          </div>
+
+          <!-- segmented tabs -->
+          <div class="seg-tabs">
+            <button class="seg-btn active" data-seg="dorm">宿舍领地战</button>
+            <button class="seg-btn" data-seg="rank">全校段位榜</button>
+            <button class="seg-btn" data-seg="club">运动战队</button>
+          </div>
+
+          <!-- dorm war board -->
+          <div id="seg-dorm" class="seg-content">
+            <div class="dorm-card">
+              <div class="dorm-head">
+                <div class="dorm-title"><span class="pulse"></span> 第 5 周 · 宿舍楼对抗赛</div>
+                <div class="dorm-time">还剩 <strong id="dormCd">3D 06:24:18</strong></div>
+              </div>
+              <div class="dorm-list" id="dormList">
+                <div class="dorm-row top1" data-dorm="12号楼 · 雷霆之家" data-base="38420">
+                  <div class="rank">1</div>
+                  <div class="name">🏆 12号楼 · 雷霆之家</div>
+                  <div class="pts">38,420</div>
+                </div>
+                <div class="dorm-row" data-dorm="7号楼 · 极光宿舍" data-base="35108">
+                  <div class="rank">2</div>
+                  <div class="name">7号楼 · 极光宿舍</div>
+                  <div class="pts">35,108</div>
+                </div>
+                <div class="dorm-row mine" data-dorm="9号楼 · 燃练战团 (我)" data-base="33872">
+                  <div class="rank">3</div>
+                  <div class="name">9号楼 · 燃练战团 (我)</div>
+                  <div class="pts">33,872</div>
+                </div>
+                <div class="dorm-row" data-dorm="3号楼 · 磐石联盟" data-base="29015">
+                  <div class="rank">4</div>
+                  <div class="name">3号楼 · 磐石联盟</div>
+                  <div class="pts">29,015</div>
+                </div>
+                <div class="dorm-row" data-dorm="15号楼 · 流星宿舍" data-base="26748">
+                  <div class="rank">5</div>
+                  <div class="name">15号楼 · 流星宿舍</div>
+                  <div class="pts">26,748</div>
+                </div>
+              </div>
+              <div style="margin-top:10px; padding:8px 12px; border-radius:10px; background:rgba(46,230,166,0.10); border:1px solid rgba(46,230,166,0.20); font-size:11px; color:var(--neon-green);">
+                💡 距离第二名仅差 <strong>1,236 PT</strong>，再开 4 个副本就能反超
+              </div>
+            </div>
+
+            <div class="section-title">
+              <h2>我的宿舍队员</h2>
+              <a class="more">8 人 →</a>
+            </div>
+            <div class="lb-list">
+              <div class="lb-row me">
+                <div class="lb-rank">1</div>
+                <div class="lb-av" style="background:var(--grad-pink)">阿</div>
+                <div class="lb-info"><div class="name">阿燃 (我)</div><div class="meta">Lv.27 · 风行剑客</div></div>
+                <div class="lb-pts"><div class="v">5,820</div><div class="label">本周贡献</div></div>
+              </div>
+              <div class="lb-row">
+                <div class="lb-rank">2</div>
+                <div class="lb-av" style="background:var(--grad-cool)">阿</div>
+                <div class="lb-info"><div class="name">阿岚</div><div class="meta">Lv.24 · 钢铁卫士</div></div>
+                <div class="lb-pts"><div class="v">4,910</div><div class="label">本周贡献</div></div>
+              </div>
+              <div class="lb-row">
+                <div class="lb-rank">3</div>
+                <div class="lb-av" style="background:var(--grad-mint)">熊</div>
+                <div class="lb-info"><div class="name">小熊</div><div class="meta">Lv.22 · 灵巧弓手</div></div>
+                <div class="lb-pts"><div class="v">4,320</div><div class="label">本周贡献</div></div>
+              </div>
+              <div class="lb-row">
+                <div class="lb-rank">4</div>
+                <div class="lb-av" style="background:var(--grad-warm)">陈</div>
+                <div class="lb-info"><div class="name">陈陈</div><div class="meta">Lv.19 · 闪电游侠</div></div>
+                <div class="lb-pts"><div class="v">3,840</div><div class="label">本周贡献</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- rank board -->
+          <div id="seg-rank" class="seg-content" style="display:none;">
+            <div class="card glow-y">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:11px; color:var(--text-3)">我的段位</div>
+                  <div style="font-size:18px; font-weight:900; font-family:'Orbitron'; color:var(--accent); margin-top:2px;">钻石 III</div>
+                  <div style="font-size:11px; color:var(--text-2); margin-top:2px;">全校排名 <strong style="color:var(--text-1)">#142</strong> / 5,820</div>
+                </div>
+                <div style="font-size:48px;">💎</div>
+              </div>
+              <div style="margin-top:10px; height:6px; border-radius:999px; background:rgba(255,255,255,0.10); overflow:hidden;">
+                <div style="height:100%; width:62%; background:var(--grad-warm); border-radius:999px;"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:11px; color:var(--text-3);">
+                <span>钻石 III · 1,240 PT</span><span>距钻石 II 还差 <strong style="color:var(--accent)">760 PT</strong></span>
+              </div>
+            </div>
+
+            <div class="section-title"><h2>全校 Top 10</h2><a class="more">本赛季 →</a></div>
+            <div class="lb-list">
+              <div class="lb-row top1">
+                <div class="lb-rank">1</div>
+                <div class="lb-av" style="background:var(--grad-warm)">王</div>
+                <div class="lb-info"><div class="name">👑 王者归来</div><div class="meta">Lv.42 · 连续 89 天</div></div>
+                <div class="lb-pts"><div class="v">28,540</div><div class="label">PT</div></div>
+              </div>
+              <div class="lb-row top2">
+                <div class="lb-rank">2</div>
+                <div class="lb-av" style="background:var(--grad-cool)">夜</div>
+                <div class="lb-info"><div class="name">夜跑之神</div><div class="meta">Lv.40 · 累计 612km</div></div>
+                <div class="lb-pts"><div class="v">26,120</div><div class="label">PT</div></div>
+              </div>
+              <div class="lb-row top3">
+                <div class="lb-rank">3</div>
+                <div class="lb-av" style="background:var(--grad-pink)">铁</div>
+                <div class="lb-info"><div class="name">铁血战士</div><div class="meta">Lv.39 · 力量 96</div></div>
+                <div class="lb-pts"><div class="v">25,408</div><div class="label">PT</div></div>
+              </div>
+              <div class="lb-row">
+                <div class="lb-rank">4</div>
+                <div class="lb-av" style="background:var(--grad-mint)">飞</div>
+                <div class="lb-info"><div class="name">飞毛腿</div><div class="meta">Lv.37</div></div>
+                <div class="lb-pts"><div class="v">23,762</div><div class="label">PT</div></div>
+              </div>
+              <div class="lb-row">
+                <div class="lb-rank">5</div>
+                <div class="lb-av" style="background:var(--grad-fire)">芸</div>
+                <div class="lb-info"><div class="name">芸朵儿</div><div class="meta">Lv.36</div></div>
+                <div class="lb-pts"><div class="v">22,480</div><div class="label">PT</div></div>
+              </div>
+              <div class="lb-row">
+                <div class="lb-rank">6</div>
+                <div class="lb-av" style="background:var(--grad-cool)">大</div>
+                <div class="lb-info"><div class="name">大力哥</div><div class="meta">Lv.34</div></div>
+                <div class="lb-pts"><div class="v">21,015</div><div class="label">PT</div></div>
+              </div>
+              <div class="lb-row">
+                <div class="lb-rank">7</div>
+                <div class="lb-av" style="background:var(--grad-pink)">小</div>
+                <div class="lb-info"><div class="name">小破球</div><div class="meta">Lv.33</div></div>
+                <div class="lb-pts"><div class="v">20,322</div><div class="label">PT</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- club -->
+          <div id="seg-club" class="seg-content" style="display:none;">
+            <div class="card">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:54px; height:54px; border-radius:16px; background:var(--grad-cool); display:grid; place-items:center; font-size:28px;">🐺</div>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:15px; font-weight:800; color:var(--text-1)">夜行狼群</div>
+                  <div style="font-size:11px; color:var(--text-3); margin-top:2px;">夜跑战队 · 32 / 50 人 · 战队 Lv.12</div>
+                  <div style="margin-top:6px; height:5px; border-radius:999px; background:rgba(255,255,255,0.08); overflow:hidden;">
+                    <div style="height:100%; width:78%; background:var(--grad-cool);"></div>
+                  </div>
+                </div>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:14px; padding-top:14px; border-top:1px solid var(--line);">
+                <div style="text-align:center;"><div style="font-size:18px; font-weight:900; font-family:'Orbitron'; color:var(--neon-cyan);">126</div><div style="font-size:10px; color:var(--text-3); margin-top:2px;">本周开练</div></div>
+                <div style="text-align:center;"><div style="font-size:18px; font-weight:900; font-family:'Orbitron'; color:var(--neon-pink);">3.2k</div><div style="font-size:10px; color:var(--text-3); margin-top:2px;">总贡献 PT</div></div>
+                <div style="text-align:center;"><div style="font-size:18px; font-weight:900; font-family:'Orbitron'; color:var(--neon-green);">#3</div><div style="font-size:10px; color:var(--text-3); margin-top:2px;">全校战队榜</div></div>
+              </div>
+            </div>
+            <div class="section-title"><h2>战队活动</h2></div>
+            <div class="card" style="display:flex; gap:12px; align-items:center;">
+              <div style="width:42px; height:42px; border-radius:12px; background:rgba(255,59,123,0.15); display:grid; place-items:center; font-size:22px;">🏆</div>
+              <div style="flex:1;">
+                <div style="font-size:13px; font-weight:700; color:var(--text-1)">周三晚 7 点 · 夜跑团建 5km</div>
+                <div style="font-size:11px; color:var(--text-3); margin-top:2px;">东操场集合 · 已 18 人报名</div>
+              </div>
+              <button style="padding:7px 14px; border-radius:999px; background:var(--accent); color:#1a1206; font-size:12px; font-weight:800;">报名</button>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- =====================================================
+             PAGE: ACHIEVEMENT
+             ===================================================== -->
+        <section class="page" id="page-honor">
+
+          <!-- season pass -->
+          <div class="pass-card">
+            <div class="pass-head">
+              <div>
+                <div class="label">SEASON · S2</div>
+                <div class="season">樱花觉醒</div>
+                <div class="desc">每日打卡 + 副本通关获取赛季积分</div>
+              </div>
+              <div class="pass-end">还剩<br/><strong id="passCd">18D 06:23:42</strong></div>
+            </div>
+            <div class="pass-progress">
+              <div class="bar"><div class="fill"></div></div>
+              <div class="lv"><strong>Lv.21</strong> / 50</div>
+            </div>
+            <div class="pass-rewards">
+              <div class="pass-tile unlocked"><span class="rank-mark">19</span>🎽</div>
+              <div class="pass-tile unlocked"><span class="rank-mark">20</span>🪙</div>
+              <div class="pass-tile current"><span class="rank-mark">21</span>👟</div>
+              <div class="pass-tile locked"><span class="rank-mark">22</span>🎁</div>
+              <div class="pass-tile locked"><span class="rank-mark">25</span>👑</div>
+            </div>
+          </div>
+
+          <!-- badge tabs -->
+          <div class="section-title"><h2>荣誉徽章 · 22 / 60</h2><a class="more">未解锁 →</a></div>
+          <div class="badge-tabs">
+            <button class="badge-tab active">全部</button>
+            <button class="badge-tab">距离</button>
+            <button class="badge-tab">连续</button>
+            <button class="badge-tab">力量</button>
+            <button class="badge-tab">社交</button>
+            <button class="badge-tab">特殊</button>
+          </div>
+
+          <div class="badge-grid">
+            <div class="badge-card legendary">
+              <div class="b-icon">🏆</div>
+              <div class="b-name">百日不退</div>
+              <div class="b-rarity">传说 · LEGENDARY</div>
+            </div>
+            <div class="badge-card epic">
+              <div class="b-icon">🌙</div>
+              <div class="b-name">月光独行</div>
+              <div class="b-rarity">史诗 · EPIC</div>
+            </div>
+            <div class="badge-card rare">
+              <div class="b-icon">⚡</div>
+              <div class="b-name">闪电之足</div>
+              <div class="b-rarity">稀有 · RARE</div>
+            </div>
+            <div class="badge-card epic">
+              <div class="b-icon">💎</div>
+              <div class="b-name">钻石段位</div>
+              <div class="b-rarity">史诗 · EPIC</div>
+            </div>
+            <div class="badge-card rare">
+              <div class="b-icon">🥇</div>
+              <div class="b-name">PK 7连胜</div>
+              <div class="b-rarity">稀有 · RARE</div>
+            </div>
+            <div class="badge-card common">
+              <div class="b-icon">🏃</div>
+              <div class="b-name">百公里</div>
+              <div class="b-rarity">普通 · COMMON</div>
+            </div>
+
+            <div class="badge-card locked">
+              <div class="b-icon">👑</div>
+              <div class="b-name">王者之路</div>
+              <div class="b-rarity">传说</div>
+              <div class="b-progress"><div class="fill" style="width:48%"></div></div>
+            </div>
+            <div class="badge-card locked">
+              <div class="b-icon">🦁</div>
+              <div class="b-name">百日狮王</div>
+              <div class="b-rarity">史诗</div>
+              <div class="b-progress"><div class="fill" style="width:64%"></div></div>
+            </div>
+            <div class="badge-card locked">
+              <div class="b-icon">🐉</div>
+              <div class="b-name">巨龙觉醒</div>
+              <div class="b-rarity">传说</div>
+              <div class="b-progress"><div class="fill" style="width:22%"></div></div>
+            </div>
+          </div>
+
+          <!-- recent unlocks -->
+          <div class="section-title"><h2>最近解锁</h2></div>
+          <div class="feed-list">
+            <div class="feed-item">
+              <div class="feed-avatar" style="background:var(--grad-warm); font-size:18px;">🥇</div>
+              <div class="feed-content">
+                <div class="text"><strong>PK 7连胜</strong> · 连续击败 7 位好友</div>
+                <div class="time">昨天 21:48 · +500 XP · +200 燃币</div>
+              </div>
+            </div>
+            <div class="feed-item">
+              <div class="feed-avatar" style="background:var(--grad-pink); font-size:18px;">🌙</div>
+              <div class="feed-content">
+                <div class="text"><strong>月光独行</strong> · 凌晨 0-5 点完成 5 次夜跑</div>
+                <div class="time">5/3 06:12 · +800 XP · +50 燃币</div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- =====================================================
+             PAGE: SHOP
+             ===================================================== -->
+        <section class="page" id="page-shop">
+
+          <div class="shop-banner">
+            <div class="icon">🛍️</div>
+            <div class="info" style="flex:1;">
+              <div class="title">赛季 S2 限定礼包</div>
+              <div class="subtitle">樱花皮肤 + 5 张美团外卖 5 元券</div>
+            </div>
+            <button class="cta">¥ 999</button>
+          </div>
+
+          <div class="seg-tabs" style="margin-top:14px;">
+            <button class="seg-btn active" data-shop="skins">时装 / 皮肤</button>
+            <button class="seg-btn" data-shop="gear">装备道具</button>
+            <button class="seg-btn" data-shop="real">真实奖励</button>
+          </div>
+
+          <!-- skins -->
+          <div id="shop-skins" class="shop-content">
+            <div class="shop-grid">
+              <div class="shop-card sk1" data-name="炽焰雄狮" data-price="3200" data-icon="🦁" data-desc="解锁角色立绘「炽焰雄狮」· 力量 +5 · 攻击副本时附带战吼特效，吓退队友屏幕一秒钟。">
+                <div class="ribbon legend">传说</div>
+                <div class="preview">🦁</div>
+                <div class="name">炽焰雄狮</div>
+                <div class="desc">力量 +5 · 战吼特效</div>
+                <div class="footer">
+                  <div class="price"><span class="coin">🪙</span>3,200</div>
+                  <button class="btn-buy">购买</button>
+                </div>
+              </div>
+              <div class="shop-card sk2" data-name="樱花狐妖" data-price="1800" data-icon="🦊" data-desc="解锁角色立绘「樱花狐妖」· 敏捷 +4 · 跑步副本时身后樱花飘落，颜值即正义。">
+                <div class="ribbon">史诗</div>
+                <div class="preview">🦊</div>
+                <div class="name">樱花狐妖</div>
+                <div class="desc">敏捷 +4 · 樱花飘落特效</div>
+                <div class="footer">
+                  <div class="price"><span class="coin">🪙</span>1,800</div>
+                  <button class="btn-buy">购买</button>
+                </div>
+              </div>
+              <div class="shop-card sk3" data-name="青鳞水龙" data-price="2400" data-icon="🐉" data-desc="解锁角色立绘「青鳞水龙」· 耐力 +6 · 长距离副本结束自动播放水波涟漪。">
+                <div class="ribbon new">NEW</div>
+                <div class="preview">🐉</div>
+                <div class="name">青鳞水龙</div>
+                <div class="desc">耐力 +6 · 水波涟漪</div>
+                <div class="footer">
+                  <div class="price"><span class="coin">🪙</span>2,400</div>
+                  <button class="btn-buy">购买</button>
+                </div>
+              </div>
+              <div class="shop-card sk4" data-name="星辰独角" data-price="2100" data-icon="🦄" data-desc="解锁角色立绘「星辰独角」· 意志 +8 · 瑜伽副本时全身覆盖星空粒子。">
+                <div class="preview">🦄</div>
+                <div class="name">星辰独角</div>
+                <div class="desc">意志 +8 · 星空轨迹</div>
+                <div class="footer">
+                  <div class="price"><span class="coin">🪙</span>2,100</div>
+                  <button class="btn-buy">购买</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- gear -->
+          <div id="shop-gear" class="shop-content" style="display:none;">
+            <div class="shop-grid">
+              <div class="shop-card sk1" data-name="疾风战靴" data-price="1200" data-icon="👟" data-desc="装备后跑步副本 XP 加成 +20%，敏捷 +6。装备类道具可在「我的 → 装备」中切换。">
+                <div class="preview">👟</div>
+                <div class="name">疾风战靴</div>
+                <div class="desc">敏捷 +6 · 跑步双倍</div>
+                <div class="footer">
+                  <div class="price"><span class="coin">🪙</span>1,200</div>
+                  <button class="btn-buy">购买</button>
+                </div>
+              </div>
+              <div class="shop-card sk2" data-name="坚毅护具" data-price="1000" data-icon="🛡️" data-desc="装备后耐力 +5，运动疲劳累积速度降低 30%，长距离副本表现更稳。">
+                <div class="preview">🛡️</div>
+                <div class="name">坚毅护具</div>
+                <div class="desc">耐力 +5 · 抗疲劳</div>
+                <div class="footer">
+                  <div class="price"><span class="coin">🪙</span>1,000</div>
+                  <button class="btn-buy">购买</button>
+                </div>
+              </div>
+              <div class="shop-card sk3" data-name="狂战士护腕" data-price="1500" data-icon="🥊" data-desc="装备后撸铁副本 XP 加成 +20%，力量 +7。攻击力扛鼎之选。">
+                <div class="preview">🥊</div>
+                <div class="name">狂战士护腕</div>
+                <div class="desc">力量 +7 · 撸铁双倍</div>
+                <div class="footer">
+                  <div class="price"><span class="coin">🪙</span>1,500</div>
+                  <button class="btn-buy">购买</button>
+                </div>
+              </div>
+              <div class="shop-card sk4" data-name="禅心念珠" data-price="900" data-icon="📿" data-desc="装备后瑜伽副本 XP 加成 +20%，意志 +6，提升专注度。">
+                <div class="preview">📿</div>
+                <div class="name">禅心念珠</div>
+                <div class="desc">意志 +6 · 瑜伽双倍</div>
+                <div class="footer">
+                  <div class="price"><span class="coin">🪙</span>900</div>
+                  <button class="btn-buy">购买</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- real rewards -->
+          <div id="shop-real" class="shop-content" style="display:none;">
+            <div style="background:rgba(255,209,0,0.08); border:1px dashed rgba(255,209,0,0.30); border-radius:12px; padding:10px 12px; margin-bottom:10px; font-size:11px; color:var(--text-2);">
+              💡 燃币可兑换 <strong style="color:var(--accent)">美团真实优惠券</strong>，让运动激励看得见
+            </div>
+            <div style="display:grid; gap:10px;">
+              <div class="reward-row" data-name="美团外卖 5 元无门槛券" data-price="280" data-icon="🛵" data-desc="兑换后立即发到你的美团账号。学校周边 1.5km 内可用，7 天有效，与其他活动叠加。">
+                <div class="brand" style="background:var(--grad-warm);">美团<br/>外卖</div>
+                <div class="info">
+                  <div class="name">美团外卖 5 元无门槛券</div>
+                  <div class="desc">学校周边 1.5km 通用 · 7 天有效</div>
+                  <div class="stock"><div class="fill" style="width:62%"></div></div>
+                  <div class="stock-text">本月剩 <span class="stock-num">248</span> / 400 份</div>
+                </div>
+                <div class="price-box">
+                  <div class="num">280</div>
+                  <div class="lbl">🪙 燃币</div>
+                </div>
+              </div>
+              <div class="reward-row" data-name="合作健身房单次体验券" data-price="680" data-icon="🏋️" data-desc="兑换后凭券到合作健身房（乐刻 / 超级猩猩 / 一兆韦德等）享受 1 次免费体验，全国通用。">
+                <div class="brand" style="background:var(--grad-cool); color:#06292e;">美团<br/>健身</div>
+                <div class="info">
+                  <div class="name">合作健身房单次体验券</div>
+                  <div class="desc">乐刻 / 超级猩猩等 · 全国通用</div>
+                  <div class="stock"><div class="fill" style="width:34%"></div></div>
+                  <div class="stock-text">本月剩 <span class="stock-num">51</span> / 150 份</div>
+                </div>
+                <div class="price-box">
+                  <div class="num">680</div>
+                  <div class="lbl">🪙 燃币</div>
+                </div>
+              </div>
+              <div class="reward-row" data-name="蛋白粉 / 鸡胸肉满 50 减 10" data-price="180" data-icon="🍗" data-desc="美团优选「运动营养」专区使用，14 天有效，可叠加店铺优惠。">
+                <div class="brand" style="background:var(--grad-pink);">美团<br/>优选</div>
+                <div class="info">
+                  <div class="name">蛋白粉 / 鸡胸肉满 50 减 10</div>
+                  <div class="desc">运动营养专区 · 14 天有效</div>
+                  <div class="stock"><div class="fill" style="width:80%"></div></div>
+                  <div class="stock-text">本月剩 <span class="stock-num">320</span> / 400 份</div>
+                </div>
+                <div class="price-box">
+                  <div class="num">180</div>
+                  <div class="lbl">🪙 燃币</div>
+                </div>
+              </div>
+              <div class="reward-row" data-name="美团骑行月卡" data-price="1580" data-icon="🚲" data-desc="美团骑行月卡，校园通勤无限次骑行，30 天有效。本月稀缺奖品。">
+                <div class="brand" style="background:var(--grad-mint); color:#063226;">美团<br/>骑行</div>
+                <div class="info">
+                  <div class="name">美团骑行月卡</div>
+                  <div class="desc">校园通勤 · 无限次骑行</div>
+                  <div class="stock"><div class="fill" style="width:18%"></div></div>
+                  <div class="stock-text">本月剩 <span class="stock-num">9</span> / 50 份</div>
+                </div>
+                <div class="price-box">
+                  <div class="num">1,580</div>
+                  <div class="lbl">🪙 燃币</div>
+                </div>
+              </div>
+              <div class="reward-row" data-name="迪卡侬 30 元代金券" data-price="880" data-icon="🥎" data-desc="迪卡侬全国线下门店及线上通用。可购买跑鞋、瑜伽垫、护具等运动装备。">
+                <div class="brand" style="background:var(--grad-fire);">运动<br/>装备</div>
+                <div class="info">
+                  <div class="name">迪卡侬 30 元代金券</div>
+                  <div class="desc">线下门店 / 线上通用</div>
+                  <div class="stock"><div class="fill" style="width:55%"></div></div>
+                  <div class="stock-text">本月剩 <span class="stock-num">110</span> / 200 份</div>
+                </div>
+                <div class="price-box">
+                  <div class="num">880</div>
+                  <div class="lbl">🪙 燃币</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- =====================================================
+             PAGE: PROFILE / 我的
+             ===================================================== -->
+        <section class="page" id="page-me">
+
+          <div class="profile-hero">
+            <div class="av">🦊</div>
+            <div class="nick">阿燃</div>
+            <div class="uid">UID · 8821 6504 · 风行剑客 / 钻石 III</div>
+            <div class="titles">
+              <span class="t gold">⚡ 夜跑追光者</span>
+              <span class="t cyan">🌊 百日不退</span>
+              <span class="t pink">⚔️ PK七连胜</span>
+            </div>
+            <div class="stat-row">
+              <div class="cell"><div class="num">312</div><div class="lbl">总打卡</div></div>
+              <div class="cell"><div class="num">486km</div><div class="lbl">累计里程</div></div>
+              <div class="cell"><div class="num">28.4k</div><div class="lbl">总 XP</div></div>
+            </div>
+          </div>
+
+          <div class="section-title"><h2>本月数据</h2></div>
+          <div class="card">
+            <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:14px;">
+              <div>
+                <div style="font-size:11px; color:var(--text-3)">运动时长</div>
+                <div style="font-size:24px; font-weight:900; color:var(--text-1); font-family:'Orbitron'; margin-top:2px;">18h <span style="font-size:14px; color:var(--text-2)">42m</span></div>
+                <div style="font-size:11px; color:var(--neon-green); margin-top:2px;">↑ 较上月 +24%</div>
+              </div>
+              <div>
+                <div style="font-size:11px; color:var(--text-3)">消耗卡路里</div>
+                <div style="font-size:24px; font-weight:900; color:var(--text-1); font-family:'Orbitron'; margin-top:2px;">12,840 <span style="font-size:14px; color:var(--text-2)">kcal</span></div>
+                <div style="font-size:11px; color:var(--neon-green); margin-top:2px;">↑ 较上月 +18%</div>
+              </div>
+            </div>
+            <!-- mini bar chart -->
+            <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--line);">
+              <div style="font-size:11px; color:var(--text-3); margin-bottom:8px;">最近 7 天打卡热力</div>
+              <div style="display:flex; gap:6px; align-items:flex-end; height:60px;">
+                <div style="flex:1; height:42%; background:var(--grad-cool); border-radius:6px 6px 2px 2px;"></div>
+                <div style="flex:1; height:68%; background:var(--grad-cool); border-radius:6px 6px 2px 2px;"></div>
+                <div style="flex:1; height:88%; background:var(--grad-warm); border-radius:6px 6px 2px 2px;"></div>
+                <div style="flex:1; height:34%; background:var(--grad-cool); border-radius:6px 6px 2px 2px;"></div>
+                <div style="flex:1; height:75%; background:var(--grad-cool); border-radius:6px 6px 2px 2px;"></div>
+                <div style="flex:1; height:96%; background:var(--grad-warm); border-radius:6px 6px 2px 2px; box-shadow: 0 0 12px rgba(255,209,0,0.4);"></div>
+                <div style="flex:1; height:55%; background:var(--grad-cool); border-radius:6px 6px 2px 2px; opacity:.5;"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:10px; color:var(--text-3);">
+                <span>周一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title"><h2>更多</h2></div>
+          <div class="menu-list">
+            <div class="menu-row">
+              <div class="m-icon">🤖</div>
+              <div class="m-text">
+                <div class="t">AI 教练</div>
+                <div class="s">根据你的数据推荐次日训练</div>
+              </div>
+              <div class="arrow">›</div>
+            </div>
+            <div class="menu-row">
+              <div class="m-icon">🎯</div>
+              <div class="m-text">
+                <div class="t">长期目标</div>
+                <div class="s">「90 天减脂 5kg」进行中 · 32 / 90 天</div>
+              </div>
+              <div class="arrow">›</div>
+            </div>
+            <div class="menu-row">
+              <div class="m-icon">⌚</div>
+              <div class="m-text">
+                <div class="t">设备绑定</div>
+                <div class="s">已连接 Apple Watch · 自动打卡</div>
+              </div>
+              <div class="arrow">›</div>
+            </div>
+            <div class="menu-row">
+              <div class="m-icon">⚙️</div>
+              <div class="m-text">
+                <div class="t">设置</div>
+                <div class="s">通知 · 隐私 · 关于燃练</div>
+              </div>
+              <div class="arrow">›</div>
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+
+      <!-- bottom tab bar -->
+      <nav class="tab-bar" role="navigation">
+        <button class="tab-btn active" data-tab="page-home" aria-label="首页">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M3 12l9-9 9 9v9a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1z"/>
+          </svg>
+          <span>首页</span>
+        </button>
+        <button class="tab-btn" data-tab="page-battle" aria-label="战场">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M14.5 17.5L4 18l4-4M14 6.5l-3 3 4 4 3-3z M19 5l-1 1M11 13L4 20"/>
+          </svg>
+          <span>战场</span>
+        </button>
+        <button class="tab-cta" data-tab="page-workout" aria-label="开练">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+            <path d="M6.5 6.5l3-3 11 11-3 3-2-2-3 3-2-2 3-3-2-2-3 3-2-2 3-3z"/>
+          </svg>
+          <span class="tab-cta-label">开练</span>
+        </button>
+        <button class="tab-btn" data-tab="page-honor" aria-label="荣誉">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M6 9H4a2 2 0 0 1-2-2V5h4M18 9h2a2 2 0 0 0 2-2V5h-4M6 5v6a6 6 0 0 0 12 0V5z"/>
+            <path d="M9 21h6M12 17v4"/>
+          </svg>
+          <span>荣誉</span>
+        </button>
+        <button class="tab-btn" data-tab="page-shop" aria-label="商店">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M3 7h18l-1.6 11.2a2 2 0 0 1-2 1.8H6.6a2 2 0 0 1-2-1.8L3 7z"/>
+            <path d="M8 7V5a4 4 0 0 1 8 0v2"/>
+          </svg>
+          <span>商店</span>
+        </button>
+      </nav>
+
+      <!-- workout in-progress overlay -->
+      <div class="progress-screen" id="progressScreen">
+        <div class="ps-top">
+          <div class="name" id="psName">晨跑追光</div>
+          <button class="quit" id="quitWorkout">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+        <div class="ps-mid">
+          <div class="ring">
+            <svg viewBox="0 0 240 240">
+              <circle class="ring-bg" cx="120" cy="120" r="110"/>
+              <circle class="ring-fg" id="ringFg" cx="120" cy="120" r="110"/>
+            </svg>
+            <div class="center">
+              <div class="time" id="psTime">00:00</div>
+              <div class="label">已用时</div>
+            </div>
+          </div>
+
+          <!-- live big metrics -->
+          <div class="ps-metrics">
+            <div class="m-box">
+              <div class="m-num" id="psDist">0.00</div>
+              <div class="m-lbl">距离 km</div>
+            </div>
+            <div class="m-box">
+              <div class="m-num" id="psPace">--'--"</div>
+              <div class="m-lbl">配速 /km</div>
+            </div>
+            <div class="m-box">
+              <div class="m-num" id="psCal">0</div>
+              <div class="m-lbl">卡路里</div>
+            </div>
+          </div>
+
+          <!-- heart rate live waveform -->
+          <div class="ps-hr">
+            <div class="hr-left">
+              <div class="hr-num"><span id="psHr">126</span><span class="hr-unit">bpm</span></div>
+              <div class="hr-tag" id="hrZone">有氧区间</div>
+            </div>
+            <svg class="hr-wave" viewBox="0 0 200 50" preserveAspectRatio="none">
+              <path id="hrPath" d="" fill="none" stroke="url(#hrGrad)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="hrGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#FF3B7B" stop-opacity="0"/>
+                  <stop offset="20%" stop-color="#FF3B7B" stop-opacity="0.5"/>
+                  <stop offset="100%" stop-color="#FF3B7B" stop-opacity="1"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          <!-- live route map (only for cardio) -->
+          <div class="ps-map" id="psMap">
+            <svg viewBox="0 0 320 80" preserveAspectRatio="none">
+              <defs>
+                <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M20 0L0 0 0 20" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect width="320" height="80" fill="url(#grid)"/>
+              <path id="routeBg" d="M10 60 Q60 10, 120 35 T240 25 T310 50" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="3" stroke-linecap="round"/>
+              <path id="routeFg" d="M10 60 Q60 10, 120 35 T240 25 T310 50" fill="none" stroke="url(#hrGrad)" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
+              <circle id="routeRunner" cx="10" cy="60" r="5" fill="#FFD100" stroke="#0A0E1A" stroke-width="2"/>
+            </svg>
+            <div class="map-label">📍 校园环线 · 起点 东操场</div>
+          </div>
+
+          <div class="ps-tip" id="psTip">💡 队友 @小林 也正在开练「钢铁锻炉」，互相加油 +10% XP</div>
+        </div>
+        <div class="ps-bottom">
+          <button class="btn-secondary" id="pauseWorkout">⏸ 暂停</button>
+          <button class="btn-primary" id="finishWorkout">完成 🏁</button>
+        </div>
+      </div>
+
+      <!-- result modal -->
+      <div class="modal-mask" id="resultModal">
+        <div class="result-card">
+          <div class="result-title" id="resTitle">VICTORY!</div>
+          <div class="result-sub" id="resSub">副本通关 · 晨跑追光</div>
+          <div class="result-trophy">🏆</div>
+          <div class="result-stats">
+            <div class="item xp"><div class="lbl">经验</div><div class="num" id="resXp">+320</div></div>
+            <div class="item gold"><div class="lbl">燃币</div><div class="num" id="resGold">+80</div></div>
+            <div class="item attr"><div class="lbl">敏捷</div><div class="num">+5</div></div>
+          </div>
+          <div class="result-drop">
+            <div class="e">⚔️</div>
+            <div class="text">
+              <div class="name">史诗装备掉落 · 疾风战靴</div>
+              <div class="desc">敏捷 +6 · 跑步类副本 XP 加成 +20%</div>
+            </div>
+          </div>
+          <div class="result-actions">
+            <button class="btn-secondary" id="resShare">📤 分享</button>
+            <button class="btn-primary" id="resClose">收下战利品</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- level up toast -->
+      <div class="level-up-toast" id="levelUp">⚡ LEVEL UP! 你升到了 Lv.28</div>
+
+      <!-- toast stack -->
+      <div class="toast-stack" id="toastStack"></div>
+
+      <!-- purchase confirm modal -->
+      <div class="confirm-modal" id="confirmModal">
+        <div class="confirm-card">
+          <div class="ch">
+            <div class="icon" id="cmIcon">🛒</div>
+            <div class="title" id="cmTitle">确认购买</div>
+            <div class="price-line">
+              <span style="font-size:18px;">🪙</span>
+              <span class="p" id="cmPrice">1,200</span>
+            </div>
+            <div class="balance" id="cmBalance">余额：2,840 燃币 → 购买后剩余 1,640</div>
+          </div>
+          <div class="desc" id="cmDesc">购买后立即拥有该商品，可在「我的 → 装备/时装」中切换装备。</div>
+          <div class="actions">
+            <button class="btn-secondary" id="cmCancel">取消</button>
+            <button class="btn-primary" id="cmConfirm">立即购买</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+<script>
+/* =================================================
+   STATE — persisted across reloads
+   ================================================= */
+const SK = 'burnify_state_v2';
+const defaultState = {
+  level: 27, xp: 2720, xpMax: 4000,
+  gold: 2840, energy: 4, energyMax: 5,
+  energyRegenMs: 50 * 60 * 1000, // 50min
+  energyLastRegenAt: Date.now() - 8 * 60 * 1000,
+  streak: 18,
+  pkMyPts: 2840, pkOpPts: 2210,
+  ownedSkins: ['default'],
+  ownedRewards: [],
+  questsClaimed: [],
+  totalRunKm: 486.2,
+  totalSessions: 312,
+  seasonEndAt: 0, pkEndAt: 0, dormEndAt: 0,
+};
+let state = (() => {
+  try {
+    const raw = localStorage.getItem(SK);
+    if (!raw) throw 0;
+    return Object.assign({}, defaultState, JSON.parse(raw));
+  } catch (_) {
+    return Object.assign({}, defaultState);
+  }
+})();
+
+const NOW = Date.now();
+if (!state.seasonEndAt || state.seasonEndAt < NOW + 1000) state.seasonEndAt = NOW + (18*24 + 6) * 3600 * 1000 + 23 * 60 * 1000 + 42 * 1000;
+if (!state.pkEndAt    || state.pkEndAt    < NOW + 1000) state.pkEndAt    = NOW + (2*24 + 13) * 3600 * 1000 + 24 * 60 * 1000 + 8 * 1000;
+if (!state.dormEndAt  || state.dormEndAt  < NOW + 1000) state.dormEndAt  = NOW + (3*24 + 6) * 3600 * 1000 + 24 * 60 * 1000 + 18 * 1000;
+
+function saveState() {
+  try { localStorage.setItem(SK, JSON.stringify(state)); } catch (_) {}
+}
+function fmtNum(n) { return Math.floor(n).toLocaleString('en-US'); }
+
+/* =================================================
+   UI refresh
+   ================================================= */
+function refreshUI() {
+  document.getElementById('hdLevel').textContent = '⚡ Lv.' + state.level;
+  document.getElementById('hdGold').textContent = fmtNum(state.gold);
+  document.getElementById('hdEnergy').textContent = state.energy + '/' + state.energyMax;
+  document.getElementById('heroLv').textContent = 'Lv.' + state.level;
+  document.getElementById('heroXpCur').textContent = fmtNum(state.xp);
+  document.getElementById('heroXpMax').textContent = fmtNum(state.xpMax);
+  document.getElementById('heroXpLeft').textContent = fmtNum(Math.max(0, state.xpMax - state.xp));
+  document.getElementById('heroXpFill').style.width = (state.xp / state.xpMax * 100).toFixed(1) + '%';
+  document.getElementById('resGoldNum').textContent = fmtNum(state.gold);
+  document.getElementById('resEnergyNum').textContent = state.energy + ' / ' + state.energyMax;
+  document.getElementById('resStreakNum').textContent = state.streak + ' 天';
+  document.getElementById('pkMyPts').textContent = fmtNum(state.pkMyPts);
+  document.getElementById('pkOpPts').textContent = fmtNum(state.pkOpPts);
+  const pkTotal = state.pkMyPts + state.pkOpPts;
+  document.getElementById('pkMyFill').style.width = (state.pkMyPts / pkTotal * 100).toFixed(1) + '%';
+  document.getElementById('pkOpFill').style.width = (state.pkOpPts / pkTotal * 100).toFixed(1) + '%';
+  const lead = document.getElementById('pkLead');
+  const diff = state.pkMyPts - state.pkOpPts;
+  lead.textContent = (diff >= 0 ? '领先 ' : '落后 ') + fmtNum(Math.abs(diff)) + ' PT';
+  lead.style.color = diff >= 0 ? 'var(--neon-pink)' : 'var(--neon-cyan)';
+}
+
+/* =================================================
+   LIVE CLOCK & COUNTDOWNS
+   ================================================= */
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+function fmtClock(d) { return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+function fmtCd(ms, withSec=true) {
+  if (ms < 0) ms = 0;
+  const totalSec = Math.floor(ms / 1000);
+  const d = Math.floor(totalSec / 86400);
+  const h = Math.floor((totalSec % 86400) / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  if (d > 0) return d + 'D ' + pad(h) + ':' + pad(m) + (withSec ? ':' + pad(s) : '');
+  return pad(h) + ':' + pad(m) + (withSec ? ':' + pad(s) : '');
+}
+function fmtMinSec(ms) {
+  const totalSec = Math.max(0, Math.floor(ms / 1000));
+  return pad(Math.floor(totalSec / 60)) + ':' + pad(totalSec % 60);
+}
+function updateGreeting(d) {
+  const h = d.getHours();
+  let g = '下午好';
+  if (h < 5) g = '夜深了';
+  else if (h < 9) g = '早安';
+  else if (h < 12) g = '上午好';
+  else if (h < 14) g = '中午好';
+  else if (h < 18) g = '下午好';
+  else if (h < 23) g = '晚上好';
+  else g = '夜深了';
+  document.getElementById('greetText').textContent = g;
+}
+function updateClock() {
+  const now = new Date();
+  document.getElementById('sysClock').textContent = fmtClock(now);
+  updateGreeting(now);
+}
+function updateCountdowns() {
+  const now = Date.now();
+  const seasonEl = document.getElementById('seasonCd'); if (seasonEl) seasonEl.textContent = fmtCd(state.seasonEndAt - now);
+  const passEl = document.getElementById('passCd');     if (passEl)   passEl.textContent   = fmtCd(state.seasonEndAt - now);
+  const pkEl = document.getElementById('pkCd');         if (pkEl)     pkEl.textContent     = fmtCd(state.pkEndAt - now);
+  const dormEl = document.getElementById('dormCd');     if (dormEl)   dormEl.textContent   = fmtCd(state.dormEndAt - now);
+
+  if (state.energy < state.energyMax) {
+    const since = now - state.energyLastRegenAt;
+    const remain = state.energyRegenMs - since;
+    if (remain <= 0) {
+      state.energy = Math.min(state.energyMax, state.energy + 1);
+      state.energyLastRegenAt = now;
+      saveState(); refreshUI();
+      pushToast('success', '⚡ 能量恢复 +1', '当前能量 ' + state.energy + '/' + state.energyMax);
+    } else {
+      const er = document.getElementById('energyRegen');
+      if (er) er.textContent = fmtMinSec(remain);
+    }
+  } else {
+    const er = document.getElementById('energyRegen');
+    if (er) er.textContent = '已满';
+  }
+}
+setInterval(updateClock, 1000); updateClock();
+setInterval(updateCountdowns, 1000);
+
+/* =================================================
+   TOAST QUEUE
+   ================================================= */
+const toastStack = document.getElementById('toastStack');
+function pushToast(type, title, desc, dur = 2600) {
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  const icons = { success: '✓', warn: '!', info: 'i', gold: '🪙' };
+  t.innerHTML = '<div class="ti">' + (icons[type] || 'i') + '</div><div class="tt"><div class="title">' + title + '</div>' + (desc ? '<div class="desc">' + desc + '</div>' : '') + '</div>';
+  toastStack.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => {
+    t.classList.add('exit');
+    setTimeout(() => t.remove(), 380);
+  }, dur);
+}
+
+/* =================================================
+   TAB NAV
+   ================================================= */
+const tabs = document.querySelectorAll('[data-tab]');
+const pages = document.querySelectorAll('.page');
+function switchPage(id) {
+  pages.forEach(p => p.classList.toggle('active', p.id === id));
+  document.querySelectorAll('.tab-btn[data-tab], .tab-cta[data-tab]').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === id);
+  });
+  document.getElementById('viewport').scrollTo({top: 0, behavior: 'instant'});
+}
+tabs.forEach(t => t.addEventListener('click', e => { e.stopPropagation(); switchPage(t.dataset.tab); }));
+
+/* =================================================
+   SEGMENTS
+   ================================================= */
+document.querySelectorAll('[data-seg]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const grp = btn.parentElement;
+    grp.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#seg-dorm, #seg-rank, #seg-club').forEach(c => c.style.display = 'none');
+    document.getElementById('seg-' + btn.dataset.seg).style.display = '';
+  });
+});
+document.querySelectorAll('[data-shop]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const grp = btn.parentElement;
+    grp.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#shop-skins, #shop-gear, #shop-real').forEach(c => c.style.display = 'none');
+    document.getElementById('shop-' + btn.dataset.shop).style.display = '';
+  });
+});
+
+/* =================================================
+   WORKOUT FLOW (heart rate + distance + pace + cal + map)
+   ================================================= */
+const progressScreen = document.getElementById('progressScreen');
+const resultModal = document.getElementById('resultModal');
+const psName = document.getElementById('psName');
+const psTime = document.getElementById('psTime');
+const psHr = document.getElementById('psHr');
+const psDist = document.getElementById('psDist');
+const psPace = document.getElementById('psPace');
+const psCal = document.getElementById('psCal');
+const psTip = document.getElementById('psTip');
+const psMap = document.getElementById('psMap');
+const hrZone = document.getElementById('hrZone');
+const hrPath = document.getElementById('hrPath');
+const ringFg = document.getElementById('ringFg');
+const routeFg = document.getElementById('routeFg');
+const routeRunner = document.getElementById('routeRunner');
+const C = 2 * Math.PI * 110;
+ringFg.style.strokeDasharray = C;
+let workoutTimer = null;
+let workoutElapsed = 0;
+let workoutTotal = 1500;
+let curDungeon = null;
+let hrSeries = [];
+let hrCenter = 130;
+let pseudoDistance = 0;
+const cardioNames = ['晨跑追光', '疾风骑行'];
+const tipPool = [
+  '💡 队友 @小林 也在练「钢铁锻炉」，互相加油 +10% XP',
+  '🌬️ 保持呼吸节奏：吸 2 步、呼 2 步',
+  '🔥 接下来 5 分钟可以再加点强度，心率维持在 140 上下最佳',
+  '🦵 开始有点累了？正常的，这正是耐力增长的关键 30 秒',
+  '🎯 完成本次副本，「百日不退」徽章进度 +1%',
+  '🏆 你已超过校内 84% 同年级同学，再坚持一下！',
+  '👯 已检测到 3 位好友正在锻炼，分享你的进度吧'
+];
+
+function fmtTime(s) { const m = Math.floor(s / 60); return pad(m) + ':' + pad(s % 60); }
+function fmtPace(secPerKm) { const m = Math.floor(secPerKm / 60); const s = Math.floor(secPerKm % 60); return m + "'" + pad(s) + '"'; }
+
+function drawHr() {
+  const W = 200, H = 50, N = 30;
+  while (hrSeries.length > N) hrSeries.shift();
+  while (hrSeries.length < N) hrSeries.unshift(hrCenter);
+  let path = '';
+  for (let i = 0; i < N; i++) {
+    const x = (i / (N - 1)) * W;
+    const v = hrSeries[i];
+    const y = H - ((v - 60) / 120) * H;
+    path += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1);
+  }
+  hrPath.setAttribute('d', path);
+}
+function pickHrZone(bpm) {
+  if (bpm < 110) return { label: '热身区间', color: 'var(--neon-cyan)' };
+  if (bpm < 140) return { label: '有氧区间', color: 'var(--neon-pink)' };
+  if (bpm < 160) return { label: '燃脂区间', color: 'var(--neon-orange)' };
+  return { label: '极限区间', color: 'var(--accent)' };
+}
+
+function startWorkout(d) {
+  if (state.energy <= 0) {
+    pushToast('warn', '⚡ 能量不足', '请等待能量恢复或充能');
+    return;
+  }
+  if (state.energy === state.energyMax) state.energyLastRegenAt = Date.now();
+  state.energy -= 1;
+  saveState(); refreshUI();
+
+  curDungeon = d;
+  workoutElapsed = 0;
+  pseudoDistance = 0;
+  workoutTotal = parseInt(d.dataset.time.split(':').reduce((a, v) => a * 60 + parseInt(v), 0));
+  if (!workoutTotal || workoutTotal < 60) workoutTotal = 1500;
+
+  psName.textContent = d.dataset.icon + ' ' + d.dataset.name;
+  psTime.textContent = '00:00';
+  psDist.textContent = '0.00';
+  psPace.textContent = "--'--\"";
+  psCal.textContent = '0';
+  ringFg.style.strokeDashoffset = C;
+  hrCenter = 120 + Math.floor(Math.random() * 20);
+  hrSeries = [];
+  drawHr();
+
+  const isCardio = cardioNames.includes(d.dataset.name);
+  if (isCardio) { psMap.classList.add('show'); routeFg.style.strokeDashoffset = '100'; }
+  else psMap.classList.remove('show');
+
+  psTip.textContent = tipPool[Math.floor(Math.random() * tipPool.length)];
+  progressScreen.classList.add('show');
+
+  const tickStep = Math.max(2, Math.floor(workoutTotal / 60));
+  if (workoutTimer) clearInterval(workoutTimer);
+  let lastTipIdx = -1;
+  workoutTimer = setInterval(() => {
+    workoutElapsed += tickStep;
+    if (workoutElapsed >= workoutTotal) workoutElapsed = workoutTotal;
+    const pct = workoutElapsed / workoutTotal;
+
+    psTime.textContent = fmtTime(workoutElapsed);
+    ringFg.style.strokeDashoffset = C * (1 - pct);
+
+    if (isCardio) {
+      const totalKm = d.dataset.name === '疾风骑行' ? 10 : 5;
+      pseudoDistance = totalKm * pct;
+      const accelPace = 280 + Math.sin(pct * Math.PI * 2) * 25;
+      psPace.textContent = fmtPace(accelPace);
+    } else {
+      pseudoDistance = 0;
+      psPace.textContent = '—';
+    }
+    psDist.textContent = pseudoDistance.toFixed(2);
+
+    const calPerSec = (d.dataset.name === '钢铁锻炉' || d.dataset.name === '极限燃烧') ? 0.18 : 0.13;
+    psCal.textContent = Math.round(workoutElapsed * calPerSec);
+
+    const targetHr = 110 + pct * 40 + Math.sin(workoutElapsed / 3) * 8;
+    const noisy = targetHr + (Math.random() - 0.5) * 14;
+    const bpm = Math.round(Math.max(85, Math.min(185, noisy)));
+    psHr.textContent = bpm;
+    hrSeries.push(bpm);
+    drawHr();
+    const z = pickHrZone(bpm);
+    hrZone.textContent = z.label;
+    hrZone.style.color = z.color;
+
+    if (isCardio) {
+      routeFg.style.strokeDashoffset = String(100 - pct * 100);
+      const runnerX = 10 + 300 * pct;
+      const runnerY = 60 - 30 * Math.sin(pct * Math.PI * 1.6) * Math.cos(pct * Math.PI);
+      routeRunner.setAttribute('cx', runnerX);
+      routeRunner.setAttribute('cy', runnerY);
+    }
+
+    const tipIdx = Math.floor(pct * 4);
+    if (tipIdx !== lastTipIdx) {
+      lastTipIdx = tipIdx;
+      psTip.style.opacity = '0';
+      setTimeout(() => {
+        psTip.textContent = tipPool[Math.floor(Math.random() * tipPool.length)];
+        psTip.style.opacity = '1';
+      }, 200);
+    }
+
+    if (Math.random() < 0.005 && pct < 0.95 && pct > 0.1) {
+      pushToast('info', '🏃 阶段性达成', '已超过你昨天同时段表现');
+    }
+
+    if (workoutElapsed >= workoutTotal) {
+      clearInterval(workoutTimer); workoutTimer = null;
+      finishWorkout();
+    }
+  }, 100);
+}
+
+function finishWorkout() {
+  if (workoutTimer) { clearInterval(workoutTimer); workoutTimer = null; }
+  progressScreen.classList.remove('show');
+  if (!curDungeon) return;
+  const xpGain = parseInt(curDungeon.dataset.xp);
+  const goldGain = parseInt(curDungeon.dataset.gold);
+  state.gold += goldGain;
+  state.xp += xpGain;
+  let leveled = false;
+  while (state.xp >= state.xpMax) {
+    state.xp -= state.xpMax;
+    state.level += 1;
+    state.xpMax = Math.round(state.xpMax * 1.15);
+    leveled = true;
+  }
+  state.totalSessions += 1;
+  if (cardioNames.includes(curDungeon.dataset.name)) {
+    state.totalRunKm += pseudoDistance;
+  }
+  state.pkMyPts += Math.round(xpGain * 0.5);
+  saveState(); refreshUI();
+
+  document.getElementById('resTitle').textContent = leveled ? 'LEVEL UP!' : 'VICTORY!';
+  document.getElementById('resSub').textContent = '副本通关 · ' + curDungeon.dataset.name + ' · 用时 ' + fmtTime(workoutElapsed);
+  document.getElementById('resXp').textContent = '+' + xpGain;
+  document.getElementById('resGold').textContent = '+' + goldGain;
+  resultModal.classList.add('show');
+
+  if (leveled) {
+    setTimeout(() => {
+      const t = document.getElementById('levelUp');
+      t.textContent = '⚡ LEVEL UP! 你升到了 Lv.' + state.level;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2400);
+    }, 600);
+  }
+}
+
+document.querySelectorAll('.dungeon-card').forEach(card => {
+  card.addEventListener('click', () => startWorkout(card));
+});
+document.getElementById('quitWorkout').addEventListener('click', () => {
+  if (workoutTimer) { clearInterval(workoutTimer); workoutTimer = null; }
+  progressScreen.classList.remove('show');
+  pushToast('warn', '已退出副本', '本次成绩未结算');
+});
+document.getElementById('finishWorkout').addEventListener('click', finishWorkout);
+let isPaused = false;
+document.getElementById('pauseWorkout').addEventListener('click', e => {
+  if (!isPaused) {
+    if (workoutTimer) { clearInterval(workoutTimer); workoutTimer = null; }
+    isPaused = true;
+    e.target.textContent = '▶ 继续';
+    pushToast('info', '副本已暂停', '点击继续可恢复');
+  } else {
+    isPaused = false;
+    e.target.textContent = '⏸ 暂停';
+    if (curDungeon) startWorkoutFromState();
+  }
+});
+function startWorkoutFromState() {
+  // crude resume
+  const tickStep = Math.max(2, Math.floor(workoutTotal / 60));
+  workoutTimer = setInterval(() => {
+    workoutElapsed += tickStep;
+    if (workoutElapsed >= workoutTotal) workoutElapsed = workoutTotal;
+    const pct = workoutElapsed / workoutTotal;
+    psTime.textContent = fmtTime(workoutElapsed);
+    ringFg.style.strokeDashoffset = C * (1 - pct);
+    if (workoutElapsed >= workoutTotal) {
+      clearInterval(workoutTimer); workoutTimer = null;
+      finishWorkout();
+    }
+  }, 100);
+}
+
+document.getElementById('resClose').addEventListener('click', () => resultModal.classList.remove('show'));
+document.getElementById('resShare').addEventListener('click', () => {
+  pushToast('success', '🎉 战绩已分享', '分享到「9号楼 · 燃练战团」群');
+  setTimeout(() => resultModal.classList.remove('show'), 600);
+});
+
+/* =================================================
+   PURCHASE / REDEEM FLOW
+   ================================================= */
+const confirmModal = document.getElementById('confirmModal');
+const cmIcon = document.getElementById('cmIcon');
+const cmTitle = document.getElementById('cmTitle');
+const cmPrice = document.getElementById('cmPrice');
+const cmBalance = document.getElementById('cmBalance');
+const cmDesc = document.getElementById('cmDesc');
+const cmConfirm = document.getElementById('cmConfirm');
+const cmCancel = document.getElementById('cmCancel');
+let curPurchase = null;
+function openPurchase(target) {
+  const name = target.dataset.name;
+  const price = parseInt(target.dataset.price);
+  const icon = target.dataset.icon || '🛒';
+  const desc = target.dataset.desc || '';
+  if (!name || !price) return;
+  cmIcon.textContent = icon;
+  cmTitle.textContent = name;
+  cmPrice.textContent = fmtNum(price);
+  cmDesc.textContent = desc;
+  if (state.gold < price) {
+    cmBalance.classList.add('danger');
+    cmBalance.textContent = '余额不足：当前 ' + fmtNum(state.gold) + ' 燃币 · 还差 ' + fmtNum(price - state.gold);
+    cmConfirm.textContent = '燃币不够'; cmConfirm.style.opacity = '0.5'; cmConfirm.disabled = true;
+  } else {
+    cmBalance.classList.remove('danger');
+    cmBalance.textContent = '余额：' + fmtNum(state.gold) + ' 燃币 → 购买后剩余 ' + fmtNum(state.gold - price);
+    cmConfirm.textContent = '立即购买'; cmConfirm.style.opacity = ''; cmConfirm.disabled = false;
+  }
+  curPurchase = { target, name, price };
+  confirmModal.classList.add('show');
+}
+cmCancel.addEventListener('click', () => confirmModal.classList.remove('show'));
+cmConfirm.addEventListener('click', () => {
+  if (!curPurchase) return;
+  if (state.gold < curPurchase.price) return;
+  state.gold -= curPurchase.price;
+  state.ownedRewards.push(curPurchase.name);
+  saveState(); refreshUI();
+  confirmModal.classList.remove('show');
+  pushToast('success', '✓ 购买成功', curPurchase.name + ' 已存入背包');
+  if (curPurchase.target.classList.contains('shop-card')) {
+    const btn = curPurchase.target.querySelector('.btn-buy');
+    if (btn) { btn.textContent = '已拥有'; btn.style.opacity = '0.6'; btn.style.background = 'rgba(255,255,255,0.10)'; btn.style.color = 'var(--text-2)'; }
+  } else if (curPurchase.target.classList.contains('reward-row')) {
+    const sn = curPurchase.target.querySelector('.stock-num');
+    if (sn) sn.textContent = Math.max(0, parseInt(sn.textContent) - 1);
+  }
+});
+document.querySelectorAll('.shop-card').forEach(c => {
+  c.addEventListener('click', () => {
+    if (state.ownedRewards.includes(c.dataset.name)) {
+      pushToast('info', '已拥有', c.dataset.name + ' 已在你的背包中');
+      return;
+    }
+    openPurchase(c);
+  });
+});
+document.querySelectorAll('.reward-row').forEach(c => {
+  c.addEventListener('click', () => openPurchase(c));
+});
+
+/* =================================================
+   QUEST CLAIM
+   ================================================= */
+document.querySelectorAll('.quest-item').forEach(q => {
+  q.addEventListener('click', () => {
+    if (q.classList.contains('done')) {
+      pushToast('info', '已领取', '该任务奖励已发放');
+      return;
+    }
+    const fillEl = q.querySelector('.progress-bar .fill');
+    if (!fillEl) return;
+    const w = parseFloat(fillEl.style.width || '0');
+    if (w >= 100) {
+      q.classList.add('done');
+      const xpEl = q.querySelector('.reward .xp');
+      const xpMatch = xpEl.textContent.match(/\+(\d+)/);
+      const xpVal = xpMatch ? parseInt(xpMatch[1]) : 50;
+      state.xp += xpVal;
+      while (state.xp >= state.xpMax) { state.xp -= state.xpMax; state.level++; state.xpMax = Math.round(state.xpMax * 1.15); }
+      saveState(); refreshUI();
+      pushToast('gold', '✓ 任务奖励到账', '+' + xpVal + ' XP');
+    } else {
+      pushToast('warn', '任务未完成', '完成后再来领奖吧');
+    }
+  });
+});
+
+/* =================================================
+   FEED / BADGE / SEASON BANNER
+   ================================================= */
+document.querySelectorAll('.feed-action').forEach(b => {
+  b.addEventListener('click', e => {
+    e.preventDefault(); e.stopPropagation();
+    const orig = b.textContent;
+    b.textContent = '✓ 已发送';
+    b.style.background = 'rgba(46,230,166,0.18)';
+    b.style.color = 'var(--neon-green)';
+    pushToast('success', '互动已发送', '好友会收到通知');
+    setTimeout(() => { b.textContent = orig; b.style.background = ''; b.style.color = ''; }, 1800);
+  });
+});
+document.querySelectorAll('.badge-tab').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.badge-tab').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    pushToast('info', '已切换分类：' + b.textContent.trim(), '');
+  });
+});
+document.querySelector('.shop-banner .cta')?.addEventListener('click', e => {
+  e.stopPropagation();
+  if (state.gold < 999) { pushToast('warn', '余额不足', '需要 999 燃币'); return; }
+  state.gold -= 999;
+  saveState(); refreshUI();
+  pushToast('gold', '✓ 礼包已开启', '获得樱花皮肤 + 5 张外卖券');
+});
+
+/* counter animation on stats */
+function animateCounter(el, target, dur) {
+  const startTs = performance.now();
+  function step(now) {
+    const t = Math.min(1, (now - startTs) / dur);
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = Math.round(target * eased);
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+document.querySelectorAll('.stats-grid .stat-cell .value').forEach(el => {
+  const target = parseInt(el.textContent);
+  el.textContent = '0';
+  setTimeout(() => animateCounter(el, target, 1100), 320);
+});
+
+/* =================================================
+   AI COACH rotation
+   ================================================= */
+const coachMessages = [
+  '分析你最近 7 天数据 — 撸铁次数偏少，今天建议来一组「钢铁锻炉」补一下力量值，能解锁专属称号 🦁。',
+  '检测到你今天已坐了 4 小时，强烈建议出门跑 20 分钟「晨跑追光」，恢复精力效率最高 ⚡。',
+  '<strong>本周宿舍战</strong>你们落后 1,236 PT，我帮你算过：再开 4 个副本就能反超 7 号楼，加油 🔥。',
+  '昨晚睡眠仅 6.2h，建议今天用「静心瑜舍」做 20 分钟拉伸，意志值 +6，帮助晚上入睡 😴。',
+  '我看到 <strong>@小林</strong> 刚刚在「极限燃烧」拿了 +400 XP，他在追你的 PK 分了 ⚔️。',
+  '今天天气 26℃ 微风，<strong>校园环线 5km</strong> 完美时段，别浪费 🌅。',
+  '已检测到 12 名队友今晚活跃，发起一次「夜跑团建」最高能拿 +500 XP 🌙。'
+];
+let coachIdx = 0;
+function setCoachMsg(i) {
+  const text = coachMessages[i % coachMessages.length];
+  const msgEl = document.getElementById('coachMsg');
+  msgEl.style.opacity = '0';
+  setTimeout(() => { msgEl.innerHTML = text; msgEl.style.opacity = '1'; }, 200);
+}
+document.getElementById('coachReroll').addEventListener('click', e => {
+  e.stopPropagation();
+  coachIdx++;
+  setCoachMsg(coachIdx);
+  pushToast('info', '🤖 AI 教练', '已为你换一条建议');
+});
+const _h = new Date().getHours();
+if (_h >= 6 && _h < 11) coachIdx = 1;
+else if (_h >= 11 && _h < 15) coachIdx = 4;
+else if (_h >= 15 && _h < 19) coachIdx = 2;
+else if (_h >= 19 && _h < 23) coachIdx = 0;
+else coachIdx = 3;
+setCoachMsg(coachIdx);
+
+/* =================================================
+   BATTLE LIVE: opponent score tick + dorm score live
+   ================================================= */
+function liveBattleTick() {
+  if (Math.random() < 0.35) {
+    const inc = 5 + Math.floor(Math.random() * 14);
+    state.pkOpPts += inc;
+    saveState(); refreshUI();
+    if (Math.random() < 0.5) {
+      pushToast('warn', '⚠️ 对手 +' + inc + ' PT', '小林刚完成一次副本，领先在缩小');
+    }
+    const live = document.getElementById('opLive');
+    if (live) {
+      live.style.display = 'inline';
+      setTimeout(() => live.style.display = 'none', 6000);
+    }
+  }
+  document.querySelectorAll('#dormList .dorm-row').forEach(row => {
+    if (Math.random() < 0.3) {
+      const ptsEl = row.querySelector('.pts');
+      const cur = parseInt(ptsEl.textContent.replace(/,/g, ''));
+      const inc = 10 + Math.floor(Math.random() * 50);
+      ptsEl.textContent = (cur + inc).toLocaleString('en-US');
+    }
+  });
+}
+setInterval(liveBattleTick, 8000);
+
+/* friends "currently exercising" tag */
+const friendStates = ['● 跑步中', '● 撸铁中', '● 在路上', '● 拉伸中', null, null];
+setInterval(() => {
+  document.querySelectorAll('.feed-item').forEach(item => {
+    const time = item.querySelector('.time');
+    if (!time) return;
+    if (item.dataset.tagged) return;
+    if (Math.random() < 0.4) {
+      const tag = friendStates[Math.floor(Math.random() * friendStates.length)];
+      if (!tag) return;
+      item.dataset.tagged = '1';
+      const span = document.createElement('span');
+      span.className = 'live-tag';
+      span.textContent = tag;
+      span.style.marginLeft = '4px';
+      time.appendChild(span);
+      setTimeout(() => { span.remove(); delete item.dataset.tagged; }, 12000);
+    }
+  });
+}, 6000);
+
+/* =================================================
+   NOTIFICATION BELL
+   ================================================= */
+document.querySelector('.app-header .pill-icon')?.addEventListener('click', () => {
+  const samples = [
+    ['info',  '@小林 向你发起了 PK',     '本周成绩对赌 200 燃币'],
+    ['gold',  '+ 50 燃币入账',          '昨日打卡奖励'],
+    ['success','「PK 七连胜」徽章已点亮', '查看你的荣誉墙'],
+  ];
+  samples.forEach((s, i) => setTimeout(() => pushToast(s[0], s[1], s[2]), i * 250));
+});
+
+/* battery slow drain (visual) */
+let battPct = 82;
+setInterval(() => {
+  if (Math.random() < 0.4 && battPct > 18) {
+    battPct -= 1;
+    document.getElementById('batteryNum').textContent = battPct + '%';
+    document.getElementById('batteryBar').setAttribute('width', String((battPct / 100) * 15));
+  }
+}, 30000);
+
+/* boot */
+refreshUI();
+if (routeFg) routeFg.style.strokeDashoffset = '100';
+if (!sessionStorage.getItem('welcomed')) {
+  sessionStorage.setItem('welcomed', '1');
+  setTimeout(() => pushToast('gold', '🌅 欢迎回到燃练', '今日能量恢复 +1，去开练吧！'), 600);
+}
+</script>
+</body>
+</html>
